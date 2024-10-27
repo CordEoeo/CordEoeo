@@ -25,6 +25,7 @@ interface PhotoService {
     suspend fun getPhotoPage(
         @Path("albumId") albumId: Int,
         @Path("subAlbumId") subAlbumId: Int,
+        @Query("size") pageSize: Int,
         @Query("cursor") cursor: Int,
     ): PhotoPage
 

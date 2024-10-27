@@ -7,6 +7,8 @@ import cord.eoeo.momentwo.data.model.AlbumRole
 import cord.eoeo.momentwo.data.model.AlbumSubTitle
 import cord.eoeo.momentwo.data.model.CreateAlbumInfo
 import cord.eoeo.momentwo.data.model.EditAlbumTitle
+import cord.eoeo.momentwo.data.model.PresignedRequest
+import cord.eoeo.momentwo.data.model.PresignedUrl
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -26,6 +28,13 @@ class AlbumRemoteDataSource(
         runCatching {
             withContext(dispatcher) {
                 albumService.deleteAlbum(albumId)
+            }
+        }
+
+    override suspend fun requestPresignedUrl(presignedRequest: PresignedRequest): Result<PresignedUrl> =
+        runCatching {
+            withContext(dispatcher) {
+                albumService.postAlbumPresigned(presignedRequest)
             }
         }
 

@@ -319,6 +319,9 @@ constructor(
                             is AlbumDetailContract.AlbumSettingEvents.ChangeImage -> {
                                 albumRepository
                                     .changeAlbumImage(albumId, imageUri)
+                                    .onSuccess {
+                                        setEffect { AlbumDetailContract.Effect.PopBackStackInAlbumDetail }
+                                    }
                                     .onFailure { exception ->
                                         Log.e("AlbumDetail", "changeAlbumImage onFailure", exception)
                                     }

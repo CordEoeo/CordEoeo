@@ -13,7 +13,7 @@ class PhotoRemoteMediator(
     private val photoRemoteDataSource: PhotoDataSource.Remote,
     private val photoLocalDataSource: PhotoDataSource.Local,
 ) : RemoteMediator<Int, PhotoEntity>() {
-    private var pageSize = 50
+    private var pageSize = 20
     private var albumId = 0
     private var subAlbumId = 0
 
@@ -51,7 +51,7 @@ class PhotoRemoteMediator(
         }
 
         photoRemoteDataSource
-            .getPhotoPage(albumId, subAlbumId, (page ?: 0) * pageSize)
+            .getPhotoPage(albumId, subAlbumId, pageSize, (page ?: 0) * pageSize)
             .onSuccess { photoPage ->
                 if (loadType == LoadType.REFRESH) {
                     photoLocalDataSource.clearKeys()

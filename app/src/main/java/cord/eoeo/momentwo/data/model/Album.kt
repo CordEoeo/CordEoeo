@@ -3,8 +3,6 @@ package cord.eoeo.momentwo.data.model
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import cord.eoeo.momentwo.ui.model.AlbumItem
-import okhttp3.MultipartBody
-import retrofit2.http.Part
 
 @JsonClass(generateAdapter = true)
 data class CreateAlbumInfo(
@@ -12,12 +10,13 @@ data class CreateAlbumInfo(
     val title: String,
     @Json(name = "doInviteNicknameList")
     val inviteList: List<String>,
+    val filename: String = "",
 )
 
 @JsonClass(generateAdapter = true)
 data class AlbumImage(
     val albumId: Int,
-    @Part val profileImage: MultipartBody.Part,
+    val filename: String,
 )
 
 @JsonClass(generateAdapter = true)

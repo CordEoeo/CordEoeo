@@ -11,7 +11,7 @@ import cord.eoeo.momentwo.data.photo.local.entity.PhotoRemoteKeyEntity
 
 interface PhotoDataSource {
     interface Remote {
-        suspend fun getPhotoPage(albumId: Int, subAlbumId: Int, cursor: Int): Result<PhotoPage>
+        suspend fun getPhotoPage(albumId: Int, subAlbumId: Int, pageSize: Int, cursor: Int): Result<PhotoPage>
 
         suspend fun requestPresignedUrl(presignedRequest: PresignedRequest): Result<PresignedUrl>
 

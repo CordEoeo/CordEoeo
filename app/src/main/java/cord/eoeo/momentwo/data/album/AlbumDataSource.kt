@@ -6,11 +6,15 @@ import cord.eoeo.momentwo.data.model.AlbumRole
 import cord.eoeo.momentwo.data.model.AlbumSubTitle
 import cord.eoeo.momentwo.data.model.CreateAlbumInfo
 import cord.eoeo.momentwo.data.model.EditAlbumTitle
+import cord.eoeo.momentwo.data.model.PresignedRequest
+import cord.eoeo.momentwo.data.model.PresignedUrl
 
 interface AlbumDataSource {
     suspend fun requestCreateAlbum(createAlbumInfo: CreateAlbumInfo): Result<Unit>
 
     suspend fun deleteAlbum(albumId: Int): Result<Unit>
+
+    suspend fun requestPresignedUrl(presignedRequest: PresignedRequest): Result<PresignedUrl>
 
     suspend fun changeAlbumImage(albumImage: AlbumImage): Result<Unit>
 

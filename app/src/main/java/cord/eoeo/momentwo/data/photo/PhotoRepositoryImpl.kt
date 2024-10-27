@@ -43,28 +43,28 @@ class PhotoRepositoryImpl(
     override suspend fun requestUploadPhoto(
         albumId: Int,
         subAlbumId: Int,
-        mimeType: String,
         image: Uri
     ): Result<Unit> {
+        val uriRequestBody = UriRequestBody(applicationContext.contentResolver, image)
+
         photoRemoteDataSource.requestPresignedUrl(
-            PresignedRequest(albumId, mimeType.split("/").last())
+            PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: "")
         ).map { it.presignedUrl }
             .onSuccess { presignedUrl ->
-                Log.d("Photo", "presignedUrl: $presignedUrl")
-                presignedRemoteDataSource.uploadPhoto(
-                    presignedUrl,
-                    UriRequestBody(applicationContext.contentResolver, image),
-                ).onSuccess {
-                    return photoRemoteDataSource.requestUploadPhoto(
-                        UploadPhoto(
-                            albumId,
-                            subAlbumId,
-                            presignedUrl.split("?").first()
+                val filename = presignedUrl
+                    .split("?").first()
+                    .split("/").drop(3).joinToString("/")
+                Log.d("Photo", "filename: $filename")
+
+                presignedRemoteDataSource
+                    .uploadPhoto(presignedUrl, uriRequestBody)
+                    .onSuccess {
+                        return photoRemoteDataSource.requestUploadPhoto(
+                            UploadPhoto(albumId, subAlbumId, filename)
                         )
-                    )
-                }.onFailure {
-                    return Result.failure(Exception("Presigned Upload Failure"))
-                }
+                    }.onFailure {
+                        return Result.failure(Exception("Presigned Upload Failure"))
+                    }
             }.onFailure {
                 return Result.failure(Exception("Presigned URL Failure"))
             }

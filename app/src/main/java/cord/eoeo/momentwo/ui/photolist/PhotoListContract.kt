@@ -28,7 +28,7 @@ class PhotoListContract {
     ) : UiState
 
     sealed interface Event : UiEvent {
-        data class OnUploadImage(val imageUri: Uri, val mimeType: String) : Event
+        data class OnUploadImage(val imageUri: Uri) : Event
         data class OnChangeIsRefreshing(val isRefreshing: Boolean) : Event
         data class OnChangeIsMenuExpended(val isMenuExpended: Boolean) : Event
         data class OnChangeIsEditMode(val isEditMode: Boolean) : Event
@@ -37,11 +37,13 @@ class PhotoListContract {
         data class OnChangeIsSelected(val isSelected: Boolean, val imageItem: ImageItem) : Event
         data class OnChangeIsDialogOpened(val isDialogOpened: Boolean) : Event
         data class OnConfirmDialog(val subAlbumTitle: String) : Event
+        data object OnRefreshPagingData : Event
         data object OnBack : Event
         data class OnError(val errorMessage: String) : Event
     }
 
     sealed interface Effect : UiEffect {
+        data object RefreshPagingData : Effect
         data object PopBackStack : Effect
         data class ShowSnackbar(val message: String) : Effect
     }

@@ -29,7 +29,7 @@ class PhotoListViewModel @Inject constructor(
                     subAlbumId = subAlbumId,
                     albumTitle = albumTitle,
                     subAlbumTitle = subAlbumTitle,
-                    photoPagingData = photoRepository.getPhotoPagingData(50, albumId, subAlbumId),
+                    photoPagingData = photoRepository.getPhotoPagingData(20, albumId, subAlbumId),
                 )
             )
         }
@@ -42,13 +42,16 @@ class PhotoListViewModel @Inject constructor(
             is PhotoListContract.Event.OnUploadImage -> {
                 viewModelScope.launch {
                     with(uiState.value) {
-                        Log.d("Photo", "OnClickAdd: ${newEvent.mimeType}, ${newEvent.imageUri}")
                         photoRepository.requestUploadPhoto(
                             albumId,
                             subAlbumId,
-                            newEvent.mimeType,
                             newEvent.imageUri
-                        )
+                        ).onSuccess {
+                            setEffect { PhotoListContract.Effect.RefreshPagingData }
+                        }.onFailure {
+                            /* TODO: 업로드 실패 */
+                            Log.e("Photo", "requestUploadPhoto Failure", it)
+                        }
                     }
                 }
             }
@@ -90,6 +93,7 @@ class PhotoListViewModel @Inject constructor(
                                         selectedPhotoUrls = emptyList(),
                                     )
                                 )
+                                setEffect { PhotoListContract.Effect.RefreshPagingData }
                             }.onFailure {
                                 /* TODO: 삭제 실패 */
                                 Log.e("Photo", "deletePhotos Failure", it)
@@ -133,6 +137,10 @@ class PhotoListViewModel @Inject constructor(
                             }
                     }
                 }
+            }
+
+            is PhotoListContract.Event.OnRefreshPagingData -> {
+                setEffect { PhotoListContract.Effect.RefreshPagingData }
             }
 
             is PhotoListContract.Event.OnBack -> {
