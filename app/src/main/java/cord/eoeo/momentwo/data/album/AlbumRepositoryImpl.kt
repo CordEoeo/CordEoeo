@@ -1,15 +1,23 @@
 package cord.eoeo.momentwo.data.album
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
+import cord.eoeo.momentwo.data.model.AlbumImage
 import cord.eoeo.momentwo.data.model.AlbumSubTitle
 import cord.eoeo.momentwo.data.model.CreateAlbumInfo
 import cord.eoeo.momentwo.data.model.EditAlbumTitle
+import cord.eoeo.momentwo.data.model.PresignedRequest
+import cord.eoeo.momentwo.data.presigned.PresignedDataSource
 import cord.eoeo.momentwo.domain.album.AlbumRepository
+import cord.eoeo.momentwo.domain.model.UriRequestBody
 import cord.eoeo.momentwo.ui.model.AlbumItem
 import cord.eoeo.momentwo.ui.model.MemberAuth
 
 class AlbumRepositoryImpl(
     private val albumRemoteDataSource: AlbumDataSource,
+    private val presignedRemoteDataSource: PresignedDataSource,
+    private val applicationContext: Context,
 ) : AlbumRepository {
     override suspend fun requestCreateAlbum(
         title: String,
@@ -22,9 +30,28 @@ class AlbumRepositoryImpl(
         albumId: Int,
         profileImage: Uri,
     ): Result<Unit> {
-        // TODO Uri to MultipartBody.Part
-        return Result.success(Unit)
-        // return albumRemoteDataSource.changeAlbumImage(AlbumImage(albumId, profileImage))
+        val uriRequestBody = UriRequestBody(applicationContext.contentResolver, profileImage)
+
+        albumRemoteDataSource.requestPresignedUrl(
+            PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: "")
+        ).map { it.presignedUrl }
+            .onSuccess { presignedUrl ->
+                val filename = presignedUrl
+                    .split("?").first()
+                    .split("/").drop(3).joinToString("/")
+                Log.d("Album", "filename: $filename")
+
+                presignedRemoteDataSource
+                    .uploadPhoto(presignedUrl, uriRequestBody)
+                    .onSuccess {
+                        return albumRemoteDataSource.changeAlbumImage(AlbumImage(albumId, filename))
+                    }.onFailure {
+                        return Result.failure(Exception("Presigned Upload Failure"))
+                    }
+            }.onFailure {
+                return Result.failure(Exception("Presigned URL Failure"))
+            }
+        return Result.failure(Exception("Upload Photo Failure: Unknown Error"))
     }
 
     override suspend fun deleteAlbumImage(albumId: Int): Result<Unit> = albumRemoteDataSource.deleteAlbumImage(albumId)
@@ -46,28 +73,6 @@ class AlbumRepositoryImpl(
         albumRemoteDataSource.getAlbumList().map { albumItemList ->
             albumItemList.albumList.map { it.mapToAlbumItem() }
         }
-    /*Result.success(
-        listOf(
-            AlbumItem(
-                id = 0,
-                title = "album1",
-                subTitle = "sub1",
-                imageUrl = "https://images.unsplash.com/photo-1717652480757-555af691acbb?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            AlbumItem(
-                id = 1,
-                title = "album2",
-                subTitle = "sub2",
-                imageUrl = "https://images.unsplash.com/photo-1717652480757-555af691acbb?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-            AlbumItem(
-                id = 2,
-                title = "album3",
-                subTitle = "sub3",
-                imageUrl = "https://images.unsplash.com/photo-1717652480757-555af691acbb?q=80&w=1587&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            ),
-        )
-    )*/
 
     override suspend fun getAlbumRole(albumId: Int): Result<MemberAuth> =
         albumRemoteDataSource.getAlbumRole(albumId).map { albumRole ->

@@ -81,7 +81,7 @@ fun ChangeImageScreen(
                     Text("이미지 선택")
                 }
 
-                Button(onClick = { /* TODO */ }) {
+                Button(onClick = onClickChange) {
                     Text("이미지 변경")
                 }
             }

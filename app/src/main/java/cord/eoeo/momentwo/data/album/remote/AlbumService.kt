@@ -7,13 +7,14 @@ import cord.eoeo.momentwo.data.model.AlbumRole
 import cord.eoeo.momentwo.data.model.AlbumSubTitle
 import cord.eoeo.momentwo.data.model.CreateAlbumInfo
 import cord.eoeo.momentwo.data.model.EditAlbumTitle
+import cord.eoeo.momentwo.data.model.PresignedRequest
+import cord.eoeo.momentwo.data.model.PresignedUrl
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.HTTP
 import retrofit2.http.Headers
-import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -31,9 +32,14 @@ interface AlbumService {
         @Field("albumId") albumId: Int,
     )
 
-    @Multipart
     @Headers("content-type: application/json")
-    @PUT(MomentwoApi.PUT_ALBUM_IMAGE)
+    @POST(MomentwoApi.POST_ALBUM_PRESIGNED)
+    suspend fun postAlbumPresigned(
+        @Body presignedRequest: PresignedRequest
+    ): PresignedUrl
+
+    @Headers("content-type: application/json")
+    @POST(MomentwoApi.PUT_ALBUM_IMAGE)
     suspend fun putAlbumImage(
         @Body albumImage: AlbumImage,
     )
