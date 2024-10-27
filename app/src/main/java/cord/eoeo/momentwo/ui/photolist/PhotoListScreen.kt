@@ -62,6 +62,10 @@ fun PhotoListScreen(
         effectFlow()
             .onEach { effect ->
                 when (effect) {
+                    is PhotoListContract.Effect.RefreshPagingData -> {
+                        photoPagingData().refresh()
+                    }
+
                     is PhotoListContract.Effect.PopBackStack -> {
                         popBackStack()
                     }
@@ -116,7 +120,7 @@ fun PhotoListScreen(
             onRefresh = {
                 onEvent(PhotoListContract.Event.OnChangeIsRefreshing(true))
                 coroutineScope.launch {
-                    photoPagingData().refresh()
+                    onEvent(PhotoListContract.Event.OnRefreshPagingData)
                     delay(500)
                     onEvent(PhotoListContract.Event.OnChangeIsRefreshing(false))
                 }

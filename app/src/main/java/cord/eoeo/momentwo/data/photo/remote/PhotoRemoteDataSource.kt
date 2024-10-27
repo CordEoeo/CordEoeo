@@ -14,10 +14,10 @@ class PhotoRemoteDataSource(
     private val photoService: PhotoService,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : PhotoDataSource.Remote {
-    override suspend fun getPhotoPage(albumId: Int, subAlbumId: Int, cursor: Int): Result<PhotoPage> =
+    override suspend fun getPhotoPage(albumId: Int, subAlbumId: Int, pageSize: Int, cursor: Int): Result<PhotoPage> =
         runCatching {
             withContext(dispatcher) {
-                photoService.getPhotoPage(albumId, subAlbumId, cursor)
+                photoService.getPhotoPage(albumId, subAlbumId, pageSize, cursor)
             }
         }
 

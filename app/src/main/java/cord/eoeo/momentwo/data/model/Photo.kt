@@ -1,6 +1,5 @@
 package cord.eoeo.momentwo.data.model
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import cord.eoeo.momentwo.ui.model.ImageItem
 
@@ -8,8 +7,7 @@ import cord.eoeo.momentwo.ui.model.ImageItem
 data class UploadPhoto(
     val albumId: Int,
     val subAlbumId: Int,
-    @Json(name = "filename")
-    val imageUrl: String,
+    val filename: String,
 )
 
 @JsonClass(generateAdapter = true)
@@ -35,10 +33,4 @@ data class PhotoPage(
 data class PhotoInfo(
     val id: Int,
     val imageUrl: String
-) {
-    fun mapToImageItem(): ImageItem =
-        ImageItem(
-            id = id,
-            imageUrl = imageUrl,
-        )
-}
+)
