@@ -1,13 +1,14 @@
 package cord.eoeo.momentwo.ui.albumdetail
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import cord.eoeo.momentwo.data.member.MemberRepository
-import cord.eoeo.momentwo.domain.subalbum.SubAlbumRepository
 import cord.eoeo.momentwo.domain.album.AlbumRepository
 import cord.eoeo.momentwo.domain.friend.GetFriendListUseCase
+import cord.eoeo.momentwo.domain.subalbum.SubAlbumRepository
 import cord.eoeo.momentwo.ui.BaseViewModel
 import cord.eoeo.momentwo.ui.MomentwoDestination
 import cord.eoeo.momentwo.ui.model.AlbumItem
@@ -27,9 +28,11 @@ constructor(
 ) :
     BaseViewModel<AlbumDetailContract.State, AlbumDetailContract.Event, AlbumDetailContract.Effect>() {
     init {
+        val albumDetailItem = savedStateHandle.toRoute<MomentwoDestination.AlbumDetail>()
         setState(
             uiState.value.copy(
-                albumItem = AlbumItem.newInstance(savedStateHandle.toRoute<MomentwoDestination.AlbumDetail>())
+                albumItem = AlbumItem.newInstance(albumDetailItem),
+                imageUri = Uri.parse(albumDetailItem.imageUrl),
             )
         )
     }
@@ -196,6 +199,21 @@ constructor(
                 with(uiState.value) { setState(copy(isInChangeImage = newEvent.isInChangeImage)) }
             }
 
+            is AlbumDetailContract.Event.OnSelectImage -> {
+                with(uiState.value) { setState(copy(imageUri = newEvent.imageUri)) }
+            }
+
+            is AlbumDetailContract.Event.OnCancelChangeImage -> {
+                with(uiState.value) {
+                    setState(
+                        copy(
+                            isInChangeImage = false,
+                            imageUri = Uri.parse(albumItem.imageUrl)
+                        )
+                    )
+                }
+            }
+
             is AlbumDetailContract.Event.OnSubAlbumEvents -> {
                 viewModelScope.launch {
                     val albumId = uiState.value.albumItem.id
@@ -317,13 +335,19 @@ constructor(
                     with(newEvent.albumSettingEvents) {
                         when (this) {
                             is AlbumDetailContract.AlbumSettingEvents.ChangeImage -> {
-                                albumRepository
-                                    .changeAlbumImage(albumId, imageUri)
-                                    .onSuccess {
-                                        setEffect { AlbumDetailContract.Effect.PopBackStackInAlbumDetail }
-                                    }
+                                uiState.value.imageUri?.let { imageUri ->
+                                    albumRepository
+                                        .changeAlbumImage(albumId, imageUri)
+                                        .onSuccess {
+                                            setEffect { AlbumDetailContract.Effect.PopBackStackInAlbumDetail }
+                                        }
+                                        .onFailure { exception ->
+                                            Log.e("AlbumDetail", "changeAlbumImage onFailure", exception)
+                                        }
+                                } ?: albumRepository
+                                    .deleteAlbumImage(albumId)
                                     .onFailure { exception ->
-                                        Log.e("AlbumDetail", "changeAlbumImage onFailure", exception)
+                                        Log.e("AlbumDetail", "deleteAlbumImage onFailure", exception)
                                     }
                             }
 
@@ -334,14 +358,6 @@ constructor(
                                         setEvent(AlbumDetailContract.Event.OnBack)
                                     }.onFailure { exception ->
                                         Log.e("AlbumDetail", "deleteAlbum onFailure", exception)
-                                    }
-                            }
-
-                            is AlbumDetailContract.AlbumSettingEvents.DeleteImage -> {
-                                albumRepository
-                                    .deleteAlbumImage(albumId)
-                                    .onFailure { exception ->
-                                        Log.e("AlbumDetail", "deleteAlbumImage onFailure", exception)
                                     }
                             }
 
