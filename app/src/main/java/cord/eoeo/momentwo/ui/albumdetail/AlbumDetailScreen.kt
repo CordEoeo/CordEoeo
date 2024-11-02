@@ -48,9 +48,11 @@ import cord.eoeo.momentwo.ui.model.BottomNavigationItem
 import cord.eoeo.momentwo.ui.model.MemberAuth
 import cord.eoeo.momentwo.ui.model.TextFieldDialogItem
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -198,10 +200,14 @@ fun AlbumDetailScreen(
                 selectedNavIndex = { uiState().selectedNavIndex },
                 memberAuth = { uiState().permission },
                 isEditMode = { uiState().isEditMode },
+                isInChangeImage = { uiState().isInChangeImage },
                 onClickBack = {
                     if (uiState().isInChangeImage) {
-                        onEvent(AlbumDetailContract.Event.OnChangeIsInChangeImage(false))
                         onEvent(AlbumDetailContract.Event.OnBackInAlbumDetail)
+                        coroutineScope.launch {
+                            delay(1000)
+                            onEvent(AlbumDetailContract.Event.OnCancelChangeImage)
+                        }
                     } else {
                         onEvent(AlbumDetailContract.Event.OnBack)
                     }
@@ -210,6 +216,13 @@ fun AlbumDetailScreen(
                 onClickEdit = { onEvent(AlbumDetailContract.Event.OnClickEdit) },
                 onClickCancel = { onEvent(AlbumDetailContract.Event.OnCancelEdit) },
                 onClickConfirm = { onEvent(AlbumDetailContract.Event.OnConfirmEdit) },
+                onClickChangeImage = {
+                    onEvent(
+                        AlbumDetailContract.Event.OnAlbumSettingEvents(
+                            AlbumDetailContract.AlbumSettingEvents.ChangeImage
+                        )
+                    )
+                },
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -218,6 +231,7 @@ fun AlbumDetailScreen(
                 items = { navItems },
                 selectedNavIndex = { uiState().selectedNavIndex },
                 onChangeNavIndex = { onEvent(AlbumDetailContract.Event.OnChangeNavIndex(it)) },
+                onChangeIsInChangeImage = { onEvent(AlbumDetailContract.Event.OnChangeIsInChangeImage(false)) }
             )
         },
         modifier = Modifier
@@ -305,26 +319,19 @@ fun AlbumDetailScreen(
 
             composable<AlbumDetailDestination.ChangeImage> {
                 ChangeImageRoute(
+                    coroutineScope = coroutineScope,
                     imageLoader = imageLoader,
-                    imageUrl = { uiState().albumItem.imageUrl },
+                    imageUri = { uiState().imageUri },
+                    title = { uiState().albumItem.title },
+                    subTitle = { uiState().albumItem.subTitle },
                     onChangeIsInChangeImage = { onEvent(AlbumDetailContract.Event.OnChangeIsInChangeImage(it)) },
-                    onClickChange = { uri ->
-                        uri?.let {
-                            onEvent(
-                                AlbumDetailContract.Event.OnAlbumSettingEvents(
-                                    AlbumDetailContract.AlbumSettingEvents.ChangeImage(it)
-                                )
-                            )
-                        }
-                            ?: onEvent(
-                                AlbumDetailContract.Event.OnAlbumSettingEvents(
-                                    AlbumDetailContract.AlbumSettingEvents.DeleteImage
-                                )
-                            )
-                    },
+                    onSelectImage = { onEvent(AlbumDetailContract.Event.OnSelectImage(it)) },
                     onBack = {
-                        onEvent(AlbumDetailContract.Event.OnChangeIsInChangeImage(false))
                         onEvent(AlbumDetailContract.Event.OnBackInAlbumDetail)
+                        coroutineScope.launch {
+                            delay(1000)
+                            onEvent(AlbumDetailContract.Event.OnCancelChangeImage)
+                        }
                     },
                 )
             }
@@ -340,11 +347,13 @@ fun AlbumDetailTopAppBar(
     selectedNavIndex: () -> Int,
     memberAuth: () -> MemberAuth,
     isEditMode: () -> Boolean,
+    isInChangeImage: () -> Boolean,
     onClickBack: () -> Unit,
     onClickAdd: () -> Unit,
     onClickEdit: () -> Unit,
     onClickCancel: () -> Unit,
     onClickConfirm: () -> Unit,
+    onClickChangeImage: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
     LargeTopAppBar(
@@ -382,6 +391,10 @@ fun AlbumDetailTopAppBar(
                             Icon(Icons.Default.Settings, "")
                         }
                     }
+                } else if (isInChangeImage()) {
+                    TextButton(onClick = onClickChangeImage) {
+                        Text(text = "적용", color = MaterialTheme.colorScheme.primary)
+                    }
                 }
             } else {
                 TextButton(onClick = onClickCancel) {
@@ -401,6 +414,7 @@ fun AlbumDetailBottomNavigation(
     items: () -> List<BottomNavigationItem>,
     selectedNavIndex: () -> Int,
     onChangeNavIndex: (Int) -> Unit,
+    onChangeIsInChangeImage: () -> Unit,
 ) {
     NavigationBar {
         items().forEachIndexed { index, item ->
@@ -417,6 +431,9 @@ fun AlbumDetailBottomNavigation(
                     if (selectedNavIndex() != index) {
                         onChangeNavIndex(index)
                         item.onClick()
+                        if (index != 2) {
+                            onChangeIsInChangeImage()
+                        }
                     }
                 },
             )

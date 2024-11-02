@@ -13,6 +13,7 @@ import cord.eoeo.momentwo.ui.model.SubAlbumItem
 class AlbumDetailContract {
     data class State(
         val albumItem: AlbumItem = AlbumItem(-1, "", "", ""),
+        val imageUri: Uri? = null,
         val selectedNavIndex: Int = 0,
         val permission: MemberAuth = MemberAuth.ADMIN,
         val subAlbumList: List<SubAlbumItem> = emptyList(),
@@ -47,6 +48,8 @@ class AlbumDetailContract {
         data object OnDismissInviteFriend : Event
         data object OnConfirmInviteFriend : Event
         data class OnChangeIsInChangeImage(val isInChangeImage: Boolean) : Event
+        data class OnSelectImage(val imageUri: Uri?) : Event
+        data object OnCancelChangeImage : Event
         data class OnSubAlbumEvents(val subAlbumEvents: SubAlbumEvents) : Event
         data class OnMemberEvents(val memberEvents: MemberEvents) : Event
         data class OnAlbumSettingEvents(val albumSettingEvents: AlbumSettingEvents) : Event
@@ -78,8 +81,7 @@ class AlbumDetailContract {
 
     sealed interface AlbumSettingEvents {
         data object DeleteAlbum : AlbumSettingEvents
-        data class ChangeImage(val imageUri: Uri) : AlbumSettingEvents
-        data object DeleteImage : AlbumSettingEvents
+        data object ChangeImage : AlbumSettingEvents
         data class EditSubTitle(val subTitle: String) : AlbumSettingEvents
         data object DeleteSubTitle : AlbumSettingEvents
         data class EditTitle(val title: String) : AlbumSettingEvents

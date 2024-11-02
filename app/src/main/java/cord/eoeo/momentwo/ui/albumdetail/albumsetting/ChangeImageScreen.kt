@@ -2,38 +2,49 @@ package cord.eoeo.momentwo.ui.albumdetail.albumsetting
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.PhotoAlbum
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import cord.eoeo.momentwo.ui.SIDE_EFFECTS_KEY
+import cord.eoeo.momentwo.ui.composable.AlbumItemCard
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeImageScreen(
+    coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     imageUri: () -> Uri?,
+    title: () -> String,
+    subTitle: () -> String,
+    isEdit: () -> Boolean,
+    bottomSheetState: () -> SheetState,
     onChangeIsInChangeImage: (Boolean) -> Unit,
+    onChangeIsEdit: (Boolean) -> Unit,
     onClickSelect: () -> Unit,
-    onClickChange: () -> Unit,
     onClickReset: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -43,60 +54,65 @@ fun ChangeImageScreen(
 
     BackHandler(onBack = onBack)
 
-    Column(
-        verticalArrangement = Arrangement.Center,
+    if (isEdit()) {
+        ModalBottomSheet(
+            onDismissRequest = { onChangeIsEdit(false) },
+            sheetState = bottomSheetState(),
+        ) {
+            ListItem(
+                leadingContent = { Icon(Icons.Default.PhotoAlbum, "앨범에서 이미지 선택") },
+                headlineContent = { Text("앨범에서 이미지 선택") },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                modifier = Modifier.clickable {
+                    coroutineScope.launch { bottomSheetState().hide() }.invokeOnCompletion {
+                        if (bottomSheetState().isVisible.not()) {
+                            onClickSelect()
+                            onChangeIsEdit(false)
+                        }
+                    }
+                },
+            )
+
+            ListItem(
+                leadingContent = { Icon(Icons.Default.Clear, "기본 이미지로 변경") },
+                headlineContent = { Text("기본 이미지로 변경") },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
+                modifier = Modifier.clickable {
+                    coroutineScope.launch { bottomSheetState().hide() }.invokeOnCompletion {
+                        if (bottomSheetState().isVisible.not()) {
+                            onClickReset()
+                            onChangeIsEdit(false)
+                        }
+                    }
+                },
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp),
     ) {
-        AsyncImage(
-            model = imageUri(),
-            contentDescription = "앨범 대표 이미지",
-            imageLoader = imageLoader,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f)
-                .padding(8.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(color = Color.Gray),
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
+        Box(
+            contentAlignment = Alignment.TopEnd,
         ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Button(
-                    onClick = onClickSelect,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    ),
-                ) {
-                    Text("이미지 선택")
-                }
+            AlbumItemCard(
+                imageLoader = imageLoader,
+                image = imageUri,
+                title = title,
+                subTitle = subTitle,
+                onClick = { onChangeIsEdit(true) },
+            )
 
-                Button(onClick = onClickChange) {
-                    Text("이미지 변경")
-                }
-            }
-
-            Button(
-                onClick = onClickReset,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
-                ),
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.CenterHorizontally),
+            SmallFloatingActionButton(
+                onClick = { onChangeIsEdit(true) },
+                modifier = Modifier.padding(28.dp),
             ) {
-                Text("이미지 초기화")
+                Icon(Icons.Default.Edit, "앨범 이미지 수정")
             }
         }
     }
