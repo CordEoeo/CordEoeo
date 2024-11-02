@@ -1,7 +1,6 @@
 package cord.eoeo.momentwo.ui.album
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -34,14 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import cord.eoeo.momentwo.ui.SIDE_EFFECTS_KEY
-import cord.eoeo.momentwo.ui.album.composable.AlbumItemCard
+import cord.eoeo.momentwo.ui.composable.AlbumItemCard
 import cord.eoeo.momentwo.ui.model.AlbumItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AlbumScreen(
     coroutineScope: CoroutineScope,
@@ -111,8 +109,10 @@ fun AlbumScreen(
                 items(items = uiState().albumList, key = { it.id }) { albumItem ->
                     AlbumItemCard(
                         imageLoader = imageLoader,
-                        albumItem = { albumItem },
-                        navigateToAlbumDetail = { navigateToAlbumDetail(albumItem) },
+                        image = { albumItem.imageUrl },
+                        title = { albumItem.title },
+                        subTitle = { albumItem.subTitle },
+                        onClick = { navigateToAlbumDetail(albumItem) },
                         modifier = Modifier.animateItem(),
                     )
                 }
