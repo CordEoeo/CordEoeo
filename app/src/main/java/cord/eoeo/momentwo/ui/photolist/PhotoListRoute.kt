@@ -24,6 +24,7 @@ fun PhotoListRoute(
     coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     popBackStack: () -> Unit,
+    navigateToPhotoDetail: (Int, Int, Int, String) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     viewModel: PhotoListViewModel = hiltViewModel(),
@@ -50,5 +51,6 @@ fun PhotoListRoute(
         launchGallery = { galleryLauncher.launch("image/*") },
         snackbarHostState = { snackbarHostState },
         popBackStack = popBackStack,
+        navigateToPhotoDetail = navigateToPhotoDetail
     )
 }

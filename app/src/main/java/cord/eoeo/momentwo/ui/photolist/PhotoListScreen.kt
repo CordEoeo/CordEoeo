@@ -56,6 +56,7 @@ fun PhotoListScreen(
     launchGallery: () -> Unit,
     snackbarHostState: () -> SnackbarHostState,
     popBackStack: () -> Unit,
+    navigateToPhotoDetail: (Int, Int, Int, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(SIDE_EFFECTS_KEY) {
@@ -145,7 +146,14 @@ fun PhotoListScreen(
                             onChangeSelected = { isSelected ->
                                 onEvent(PhotoListContract.Event.OnChangeIsSelected(isSelected, imageItem))
                             },
-                            onClick = { /* TODO: 사진 디테일 화면 이동 */ },
+                            onClick = {
+                                navigateToPhotoDetail(
+                                    uiState().albumId,
+                                    uiState().subAlbumId,
+                                    imageItem.id,
+                                    imageItem.imageUrl,
+                                )
+                            },
                         )
                     }
                 }
