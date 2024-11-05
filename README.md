@@ -73,12 +73,12 @@
             <tr>
                 <td><img src="https://github.com/user-attachments/assets/7f56288e-ed2b-41b7-ad7e-7e9daeb85b27" width="180" /></td>
                 <td><img src="https://github.com/user-attachments/assets/85ae1434-c3dd-4a9b-b527-a643f2fcde2f" width="180" /></td>
-                <td></td>
+                <td><img src="https://github.com/user-attachments/assets/d183c65c-0c68-4e24-87c1-f6318533df2f" width="180" /></td>
             </tr>
             <tr>
                 <td>사진 목록</td>
                 <td>사진 목록 옵션 (DropdownMenu)</td>
-                <td></td>
+                <td>사진 삭제 (목록 선택)</td>
             </tr>
             <tr>
                 <td><img src="https://github.com/user-attachments/assets/817b703d-a0d0-462d-948c-7a4ebb093cd6" width="180" /></td>
@@ -122,9 +122,9 @@
     - 우측 상단의 "+" 버튼을 눌러 친구를 초대할 수 있습니다.
     - 앨범의 관리자는 우측 상단 설정 버튼을 눌러 멤버를 관리할 수 있습니다.
 
-| <img src="https://github.com/user-attachments/assets/72e0fe62-b6c5-4ffc-b389-c85a858173a9" width="250" /> | <img src="https://github.com/user-attachments/assets/e0058047-9723-4e78-a2e7-c48ed1105031" width="250" /> | <img src="https://github.com/user-attachments/assets/bb08e019-1c6d-415a-a0d1-94ce7011cc2d" width="250" /> |
+| <img src="https://github.com/user-attachments/assets/72e0fe62-b6c5-4ffc-b389-c85a858173a9" width="250" /> | <img src="https://github.com/user-attachments/assets/e0058047-9723-4e78-a2e7-c48ed1105031" width="250" /> | <img src="https://github.com/user-attachments/assets/cc519893-71ed-4133-aca8-abb202517605" width="250" /> |
 |:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
-|                                                   앨범 설정                                                   |                                           앨범 제목, 부제목 변경 Dialog                                            |                                          앨범 대표 이미지 변경 (UI 수정 중)                                           |
+|                                                   앨범 설정                                                   |                                           앨범 제목, 부제목 변경 Dialog                                            |                                               앨범 대표 이미지 변경                                                |
 
 - 앨범 제목, 대표 사진 등 앨범의 구성요소를 수정할 수 있습니다. (관리자 권한)
 
