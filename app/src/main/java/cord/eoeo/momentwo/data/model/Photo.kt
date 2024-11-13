@@ -1,7 +1,6 @@
 package cord.eoeo.momentwo.data.model
 
 import com.squareup.moshi.JsonClass
-import cord.eoeo.momentwo.ui.model.ImageItem
 
 @JsonClass(generateAdapter = true)
 data class UploadPhoto(
@@ -21,12 +20,7 @@ data class DeletePhotos(
 @JsonClass(generateAdapter = true)
 data class PhotoPage(
     val images: List<PhotoInfo>,
-    val page: Int,
-    val size: Int,
-    val totalPages: Int,
-    val totalElements: Int,
-    val hasNext: Boolean,
-    val hasPrevious: Boolean,
+    val nextCursor: Int?,
 )
 
 @JsonClass(generateAdapter = true)
