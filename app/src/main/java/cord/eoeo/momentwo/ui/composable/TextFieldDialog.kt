@@ -19,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,9 +32,12 @@ fun TextFieldDialog(
     description: () -> String,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit,
+    initialText: () -> String = { "" },
     placeholder: () -> String = { "" },
 ) {
-    var text: String by rememberSaveable { mutableStateOf("") }
+    var text: TextFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(initialText()))
+    }
 
     TextFieldDialogScreen(
         titleText = titleText,
@@ -42,7 +46,7 @@ fun TextFieldDialog(
         placeholder = placeholder,
         onTextChange = { text = it },
         onDismiss = onDismiss,
-        onConfirm = onConfirm,
+        onConfirm = { onConfirm(text.text) },
     )
 }
 
@@ -50,11 +54,11 @@ fun TextFieldDialog(
 fun TextFieldDialogScreen(
     titleText: () -> String,
     description: () -> String,
-    text: () -> String,
+    text: () -> TextFieldValue,
     placeholder: () -> String,
-    onTextChange: (String) -> Unit,
+    onTextChange: (TextFieldValue) -> Unit,
     onDismiss: () -> Unit,
-    onConfirm: (String) -> Unit,
+    onConfirm: () -> Unit,
 ) {
     Dialog(onDismissRequest = onDismiss) {
         Card(
@@ -88,7 +92,6 @@ fun TextFieldDialogScreen(
                 OutlinedTextField(
                     value = text(),
                     onValueChange = onTextChange,
-                    singleLine = true,
                     placeholder = { Text(placeholder()) },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,7 +105,7 @@ fun TextFieldDialogScreen(
                     TextButton(onClick = onDismiss) {
                         Text(text = "취소", color = MaterialTheme.colorScheme.error)
                     }
-                    TextButton(onClick = { onConfirm(text()) }) {
+                    TextButton(onClick = { onConfirm() }) {
                         Text(text = "확인", color = MaterialTheme.colorScheme.primary)
                     }
                 }
