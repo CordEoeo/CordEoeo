@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.ImageLoader
 import cord.eoeo.momentwo.ui.SIDE_EFFECTS_KEY
 import cord.eoeo.momentwo.ui.composable.TextFieldDialog
@@ -128,15 +129,17 @@ fun PhotoListScreen(
             },
             modifier = Modifier
                 .fillMaxSize()
+                .padding(horizontal = 8.dp)
                 .padding(paddingValue),
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(100.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp),
+                modifier = Modifier.fillMaxSize(),
             ) {
-                items(count = photoPagingData().itemCount, key = { photoPagingData()[it]?.id ?: it }) { index ->
+                items(
+                    count = photoPagingData().itemCount,
+                    key = photoPagingData().itemKey { it.id },
+                ) { index ->
                     photoPagingData()[index]?.let { imageItem ->
                         PhotoListItemBox(
                             imageLoader = imageLoader,
