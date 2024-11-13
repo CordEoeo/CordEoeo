@@ -7,12 +7,14 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import cord.eoeo.momentwo.data.photo.local.entity.PhotoEntity
 import cord.eoeo.momentwo.data.photo.local.entity.PhotoRemoteKeyEntity
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalPagingApi::class)
 class PhotoRemoteMediator(
     private val photoRemoteDataSource: PhotoDataSource.Remote,
     private val photoLocalDataSource: PhotoDataSource.Local,
 ) : RemoteMediator<Int, PhotoEntity>() {
+    private val timeout = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS)
     private var pageSize = 20
     private var albumId = 0
     private var subAlbumId = 0
@@ -24,7 +26,12 @@ class PhotoRemoteMediator(
     }
 
     override suspend fun initialize(): InitializeAction {
-        return if (photoLocalDataSource.getLastKey(albumId, subAlbumId) == null) {
+        val lastKey = photoLocalDataSource.getLastKey(albumId, subAlbumId)
+
+        return if (
+            lastKey == null ||
+            System.currentTimeMillis() - lastKey.lastUpdated > timeout
+        ) {
             InitializeAction.LAUNCH_INITIAL_REFRESH
         } else {
             InitializeAction.SKIP_INITIAL_REFRESH
@@ -32,7 +39,7 @@ class PhotoRemoteMediator(
     }
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, PhotoEntity>): MediatorResult {
-        val page = when (loadType) {
+        val lastKey = when (loadType) {
             LoadType.REFRESH -> {
                 Log.d("Photo", "PhotoRemoteMediator LoadType.REFRESH")
                 null
@@ -45,13 +52,14 @@ class PhotoRemoteMediator(
 
             LoadType.APPEND -> {
                 Log.d("Photo", "PhotoRemoteMediator LoadType.APPEND")
-                photoLocalDataSource.getLastKey(albumId, subAlbumId)?.nextPage
-                    ?: return MediatorResult.Success(endOfPaginationReached = true)
+                val last = photoLocalDataSource.getLastKey(albumId, subAlbumId)
+                if (last?.nextCursor == null) return MediatorResult.Success(endOfPaginationReached = true)
+                last
             }
         }
 
         photoRemoteDataSource
-            .getPhotoPage(albumId, subAlbumId, pageSize, (page ?: 0) * pageSize)
+            .getPhotoPage(albumId, subAlbumId, pageSize, lastKey?.nextCursor ?: 0)
             .onSuccess { photoPage ->
                 if (loadType == LoadType.REFRESH) {
                     photoLocalDataSource.clearKeys()
@@ -71,11 +79,12 @@ class PhotoRemoteMediator(
                     PhotoRemoteKeyEntity(
                         albumId = albumId,
                         subAlbumId = subAlbumId,
-                        prevPage = if (photoPage.hasPrevious) photoPage.page - 1 else null,
-                        nextPage = if (photoPage.hasNext) photoPage.page + 1 else null,
+                        lastUpdated = System.currentTimeMillis(),
+                        nextCursor = photoPage.nextCursor,
                     )
                 )
-                return MediatorResult.Success(endOfPaginationReached = photoPage.hasNext.not())
+
+                return MediatorResult.Success(endOfPaginationReached = photoPage.nextCursor == null)
             }.onFailure { exception ->
                 return MediatorResult.Error(exception)
             }
