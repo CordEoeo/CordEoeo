@@ -1,4 +1,4 @@
-package cord.eoeo.momentwo.domain.model
+package cord.eoeo.momentwo.data.model
 
 import android.content.ContentResolver
 import android.net.Uri
