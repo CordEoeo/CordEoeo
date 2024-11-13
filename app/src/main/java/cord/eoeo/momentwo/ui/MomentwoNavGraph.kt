@@ -2,6 +2,7 @@ package cord.eoeo.momentwo.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,6 +23,7 @@ fun MomentwoNavGraph(
     navController: NavHostController,
     navActions: MomentwoNavigationActions,
     imageLoader: ImageLoader,
+    insetsController: WindowInsetsControllerCompat,
 ) {
     NavHost(
         navController = navController,
@@ -76,6 +78,7 @@ fun MomentwoNavGraph(
             PhotoDetailRoute(
                 coroutineScope = coroutineScope,
                 imageLoader = imageLoader,
+                insetsController = insetsController,
                 popBackStack = navActions.popBackStack,
             )
         }
