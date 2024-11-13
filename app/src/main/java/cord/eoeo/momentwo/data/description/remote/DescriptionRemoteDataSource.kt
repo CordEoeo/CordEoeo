@@ -1,0 +1,43 @@
+package cord.eoeo.momentwo.data.description.remote
+
+import cord.eoeo.momentwo.data.description.DescriptionDataSource
+import cord.eoeo.momentwo.data.model.CreateDescription
+import cord.eoeo.momentwo.data.model.DeleteDescription
+import cord.eoeo.momentwo.data.model.Description
+import cord.eoeo.momentwo.data.model.EditDescription
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+class DescriptionRemoteDataSource(
+    private val descriptionService: DescriptionService,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : DescriptionDataSource {
+    override suspend fun createDescription(createDescription: CreateDescription): Result<Unit> =
+        runCatching {
+            withContext(dispatcher) {
+                descriptionService.postCreateDescription(createDescription)
+            }
+        }
+
+    override suspend fun editDescription(editDescription: EditDescription): Result<Unit> =
+        runCatching {
+            withContext(dispatcher) {
+                descriptionService.putEditDescription(editDescription)
+            }
+        }
+
+    override suspend fun deleteDescription(deleteDescription: DeleteDescription): Result<Unit> =
+        runCatching {
+            withContext(dispatcher) {
+                descriptionService.deleteDescription(deleteDescription)
+            }
+        }
+
+    override suspend fun getDescription(albumId: Int, photoId: Int): Result<Description> =
+        runCatching {
+            withContext(dispatcher) {
+                descriptionService.getDescription(albumId, photoId)
+            }
+        }
+}
