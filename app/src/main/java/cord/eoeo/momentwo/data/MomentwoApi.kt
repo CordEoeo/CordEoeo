@@ -49,6 +49,26 @@ object MomentwoApi {
     const val POST_PHOTO_PRESIGNED = "/images/photos/presigned"
     const val POST_PHOTO_UPLOAD = "/photos/upload"
 
+    // Description
+    const val POST_CREATE_DESCRIPTION = "/descriptions/create"
+    const val PUT_EDIT_DESCRIPTION = "/descriptions/edit"
+    const val DELETE_DESCRIPTION = "/descriptions/delete"
+    /** Require @Path("albumId"), @Path("photoId") */
+    const val GET_DESCRIPTION = "/descriptions/{albumId}/{photoId}"
+
+    // Comment
+    const val POST_CREATE_COMMENT = "/photo/comments/create"
+    const val PUT_EDIT_COMMENT = "/photo/comments/edit"
+    const val DELETE_COMMENT = "/photo/comments"
+    /** Require @Path("albumId"), @Path("photoId"), @Query("size"), @Query("cursor") */
+    const val GET_COMMENT_PAGE = "/photo/comments/{albumId}/{photoId}"
+
+    // Like
+    const val POST_DO_LIKE = "/photo/likes/do"
+    const val POST_UNDO_LIKE = "/photo/likes/undo"
+    /** Require @Path("albumId"), @Path("photoId") */
+    const val GET_LIKE_COUNT = "/photo/likes/{albumId}/{photoId}"
+
     // Friend
     const val POST_FRIEND_REQUEST = "/friendship/request"
     const val DELETE_FRIEND_REQUEST = "/friendship/request/cancel"
