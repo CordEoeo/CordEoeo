@@ -1,5 +1,6 @@
 package cord.eoeo.momentwo.data.photo
 
+import android.graphics.Bitmap
 import androidx.paging.PagingSource
 import cord.eoeo.momentwo.data.model.DeletePhotos
 import cord.eoeo.momentwo.data.model.PhotoPage
@@ -8,6 +9,7 @@ import cord.eoeo.momentwo.data.model.PresignedUrl
 import cord.eoeo.momentwo.data.model.UploadPhoto
 import cord.eoeo.momentwo.data.photo.local.entity.PhotoEntity
 import cord.eoeo.momentwo.data.photo.local.entity.PhotoRemoteKeyEntity
+import java.io.OutputStream
 
 interface PhotoDataSource {
     interface Remote {
@@ -26,6 +28,8 @@ interface PhotoDataSource {
         suspend fun insertPhotos(photos: List<PhotoEntity>)
 
         suspend fun deletePhotos(photos: List<PhotoEntity>)
+
+        suspend fun downloadPhoto(bitmap: Bitmap, outputStream: OutputStream): Result<Unit>
 
         suspend fun getLastKey(albumId: Int, subAlbumId: Int): PhotoRemoteKeyEntity?
 

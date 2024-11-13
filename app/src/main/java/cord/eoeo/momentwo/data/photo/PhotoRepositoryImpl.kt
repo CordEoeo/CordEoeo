@@ -1,22 +1,32 @@
 package cord.eoeo.momentwo.data.photo
 
+import android.content.ContentValues
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import cord.eoeo.momentwo.data.model.DeletePhotos
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.UploadPhoto
+import cord.eoeo.momentwo.data.model.UriRequestBody
 import cord.eoeo.momentwo.data.photo.local.entity.PhotoEntity
 import cord.eoeo.momentwo.data.presigned.PresignedDataSource
-import cord.eoeo.momentwo.domain.model.UriRequestBody
+import cord.eoeo.momentwo.domain.photo.PhotoRepository
 import cord.eoeo.momentwo.ui.model.ImageItem
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class PhotoRepositoryImpl(
     private val photoRemoteDataSource: PhotoDataSource.Remote,
@@ -25,6 +35,9 @@ class PhotoRepositoryImpl(
     private val photoRemoteMediator: PhotoRemoteMediator,
     private val applicationContext: Context,
 ) : PhotoRepository {
+    private val imageLoader = applicationContext.imageLoader
+    private val contentResolver = applicationContext.contentResolver
+
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun getPhotoPagingData(pageSize: Int, albumId: Int, subAlbumId: Int): Flow<PagingData<ImageItem>> {
         photoRemoteMediator.setParams(pageSize, albumId, subAlbumId)
@@ -45,7 +58,7 @@ class PhotoRepositoryImpl(
         subAlbumId: Int,
         image: Uri
     ): Result<Unit> {
-        val uriRequestBody = UriRequestBody(applicationContext.contentResolver, image)
+        val uriRequestBody = UriRequestBody(contentResolver, image)
 
         photoRemoteDataSource.requestPresignedUrl(
             PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: "")
@@ -93,4 +106,32 @@ class PhotoRepositoryImpl(
         }
         return deletePhotosResult
     }
+
+    override suspend fun downloadPhoto(imageUrl: String): Result<Unit> {
+        val bitmap = loadBitmapFromUrl(imageUrl)
+            ?: return Result.failure(Exception("Failed to load bitmap"))
+        val fileName = imageUrl.split("/").last().split(".").first()
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.png")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+            put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/Momentwo")
+        }
+        val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            ?: return Result.failure(Exception("Failed to insert uri"))
+        val outputStream = contentResolver.openOutputStream(uri)
+            ?: return Result.failure(Exception("Failed to insert uri"))
+
+        return photoLocalDataSource.downloadPhoto(bitmap, outputStream)
+    }
+
+    private suspend fun loadBitmapFromUrl(imageUrl: String): Bitmap? =
+        withContext(Dispatchers.IO) {
+            (((imageLoader.execute(
+                ImageRequest.Builder(applicationContext)
+                    .data(imageUrl)
+                    .allowHardware(false)
+                    .build()
+            ) as? SuccessResult)?.drawable
+                    ) as? BitmapDrawable)?.bitmap
+        }
 }

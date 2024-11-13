@@ -9,6 +9,6 @@ data class PhotoRemoteKeyEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "album_id") val albumId: Int,
     @ColumnInfo(name = "sub_album_id") val subAlbumId: Int,
-    @ColumnInfo(name = "prev_page") val prevPage: Int?,
-    @ColumnInfo(name = "next_page") val nextPage: Int?,
+    @ColumnInfo(name = "last_updated") val lastUpdated: Long,
+    @ColumnInfo(name = "next_cursor") val nextCursor: Int?,
 )

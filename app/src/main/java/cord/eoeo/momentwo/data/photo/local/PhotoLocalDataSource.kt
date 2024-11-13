@@ -1,5 +1,6 @@
 package cord.eoeo.momentwo.data.photo.local
 
+import android.graphics.Bitmap
 import androidx.paging.PagingSource
 import cord.eoeo.momentwo.data.photo.PhotoDataSource
 import cord.eoeo.momentwo.data.photo.local.entity.PhotoEntity
@@ -7,6 +8,7 @@ import cord.eoeo.momentwo.data.photo.local.entity.PhotoRemoteKeyEntity
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.OutputStream
 
 class PhotoLocalDataSource(
     private val photoDao: PhotoDao,
@@ -27,6 +29,16 @@ class PhotoLocalDataSource(
             photoDao.deleteAll(*photos.toTypedArray())
         }
     }
+
+    override suspend fun downloadPhoto(bitmap: Bitmap, outputStream: OutputStream): Result<Unit> =
+        runCatching {
+            withContext(dispatcher) {
+                outputStream.use {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                    it.close()
+                }
+            }
+        }
 
     override suspend fun getLastKey(albumId: Int, subAlbumId: Int): PhotoRemoteKeyEntity? {
         return withContext(dispatcher) {
