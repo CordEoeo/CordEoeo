@@ -13,6 +13,7 @@ import cord.eoeo.momentwo.data.photo.remote.PhotoService
 import cord.eoeo.momentwo.data.presigned.PresignedDataSource
 import cord.eoeo.momentwo.domain.photo.DownloadPhotoUseCase
 import cord.eoeo.momentwo.domain.photo.PhotoRepository
+import cord.eoeo.momentwo.domain.photo.UpdateIsLikedUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -77,4 +78,9 @@ object PhotoModule {
     @Singleton
     fun provideDownloadPhotoUseCase(photoRepository: PhotoRepository): DownloadPhotoUseCase =
         DownloadPhotoUseCase(photoRepository)
+
+    @Provides
+    @Singleton
+    fun provideUpdateIsLikedUseCase(photoRepository: PhotoRepository): UpdateIsLikedUseCase =
+        UpdateIsLikedUseCase(photoRepository)
 }
