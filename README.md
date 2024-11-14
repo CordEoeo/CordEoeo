@@ -40,8 +40,10 @@
 |                                                   앨범 목록                                                   |                                                   앨범 생성                                                   |                                                   친구 초대                                                   |
 | <img src="https://github.com/user-attachments/assets/315e178b-ff51-4a04-b525-af46bbd9792d" width="180" /> | <img src="https://github.com/user-attachments/assets/ef7f87d8-cd65-4e47-918a-0d5e506b0c9a" width="180" /> | <img src="https://github.com/user-attachments/assets/72e0fe62-b6c5-4ffc-b389-c85a858173a9" width="180" /> |
 |                                               앨범 (서브 앨범 목록)                                               |                                                    멤버                                                     |                                                   앨범 설정                                                   |
-| <img src="https://github.com/user-attachments/assets/5ac4d48e-c620-4b70-a87c-00c4f3c1a900" width="180" /> | <img src="https://github.com/user-attachments/assets/2755b29c-5773-422d-ac70-fe5f657f1d98" width="180" /> | <img src="https://github.com/user-attachments/assets/4396b8a4-7c2e-46c6-97ab-691bb1bdbff5" width="180" /> |
+| <img src="https://github.com/user-attachments/assets/b5b2e024-2015-4ed2-bf24-f96f60f6b578" width="180" /> | <img src="https://github.com/user-attachments/assets/2755b29c-5773-422d-ac70-fe5f657f1d98" width="180" /> | <img src="https://github.com/user-attachments/assets/4396b8a4-7c2e-46c6-97ab-691bb1bdbff5" width="180" /> |
 |                                                   사진 목록                                                   |                                          사진 목록 옵션 (DropdownMenu)                                          |                                               사진 삭제 (목록 선택)                                               |
+| <img src="https://github.com/user-attachments/assets/d9946b4a-a74b-492c-b101-cedced36f799" width="180" /> | <img src="https://github.com/user-attachments/assets/0fe694c2-0e9f-44c8-a9bc-fc02c4ac4c62" width="180" /> | <img src="https://github.com/user-attachments/assets/64444ba2-b222-4026-90ab-15cd644962f1" width="180" /> |
+|                                                  사진 디테일                                                   |                                                   사진 설명                                                   |                                                   사진 댓글                                                   |
 | <img src="https://github.com/user-attachments/assets/5a4a9cd0-87e9-403a-86bb-575c54f50d77" width="180" /> | <img src="https://github.com/user-attachments/assets/104e3263-2791-4ff7-b139-1f0c7cac4a86" width="180" /> |                                                                                                           |
 |                                                   친구 목록                                                   |                                                 친구 요청 목록                                                  |                                                                                                           |
 | <img src="https://github.com/user-attachments/assets/a06815e6-bb5f-4602-b366-7573d95c2a47" width="180" /> | <img src="https://github.com/user-attachments/assets/094212ef-3888-48cc-b557-b3c8dbff37d9" width="180" /> |                                                                                                           |
@@ -79,6 +81,16 @@
                 <td>사진 목록</td>
                 <td>사진 목록 옵션 (DropdownMenu)</td>
                 <td>사진 삭제 (목록 선택)</td>
+            </tr>
+            <tr>
+                <td><img src="https://github.com/user-attachments/assets/481c550b-d6af-43eb-afad-958c14bd8ce0" width="180" /></td>
+                <td><img src="https://github.com/user-attachments/assets/ecf79ab9-a749-4a75-a9b4-ce655e200205" width="180" /></td>
+                <td><img src="https://github.com/user-attachments/assets/27493658-fe26-465d-b751-922c4cd8b4de" width="180" /></td>
+            </tr>
+            <tr>
+                <td>사진 디테일</td>
+                <td>사진 설명</td>
+                <td>사진 댓글</td>
             </tr>
             <tr>
                 <td><img src="https://github.com/user-attachments/assets/817b703d-a0d0-462d-948c-7a4ebb093cd6" width="180" /></td>
@@ -134,19 +146,45 @@
 
 ### 사진
 
-| <img src="https://github.com/user-attachments/assets/5ac4d48e-c620-4b70-a87c-00c4f3c1a900" width="250" /> | <img src="https://github.com/user-attachments/assets/2755b29c-5773-422d-ac70-fe5f657f1d98" width="250" /> | <img src="https://github.com/user-attachments/assets/4396b8a4-7c2e-46c6-97ab-691bb1bdbff5" width="250" /> |
+| <img src="https://github.com/user-attachments/assets/b5b2e024-2015-4ed2-bf24-f96f60f6b578" width="250" /> | <img src="https://github.com/user-attachments/assets/2755b29c-5773-422d-ac70-fe5f657f1d98" width="250" /> | <img src="https://github.com/user-attachments/assets/4396b8a4-7c2e-46c6-97ab-691bb1bdbff5" width="250" /> |
 |:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
 |                                                   사진 목록                                                   |                                          사진 목록 옵션 (DropdownMenu)                                          |                                               사진 삭제 (목록 선택)                                               |
 
 - 서브 앨범에 정리한 사진들을 확인할 수 있습니다.
 
+- 내가 좋아요를 남긴 사진은 사진 우하단 하트모양으로 표시됩니다.
+
 - 우측 상단 + 버튼을 눌러 새로운 사진을 업로드할 수 있습니다.
 
 - Dropdown Menu의 항목을 선택해 서브 앨범의 제목을 변경하거나 사진을 삭제할 수 있습니다.
 
+| <img src="https://github.com/user-attachments/assets/d9946b4a-a74b-492c-b101-cedced36f799" width="250" /> | <img src="https://github.com/user-attachments/assets/316d39e1-395a-4a85-b15c-e0cc8f8c4ce8" width="250" /> |
+|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
+|                                               사진 선택, 메뉴 토글                                                |                                                 사진 좋아요 토글                                                 |
+
+- 사진 목록 화면에서 사진을 선택해 크게 볼 수 있습니다.
+
+- 사진을 탭하여 상, 하단 메뉴를 가리고 사진에만 집중할 수 있습니다.
+
+- 하단의 하트 버튼을 눌러 해당 사진에 좋아요를 남기거나 해제할 수 있습니다.
+
+| <img src="https://github.com/user-attachments/assets/70ca8683-2477-4efe-8119-521cc7e11afc" width="250" /> | <img src="https://github.com/user-attachments/assets/ac66ad77-4f56-41d4-b455-c9c3a7bd6451" width="250" /> |
+|:---------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------:|
+|                                                 사진 설명 작성                                                  |                                                 사진 설명 수정                                                  |
+
+- 사진에 대한 설명을 작성하여 공유할 수 있습니다.
+
+- 추가할 내용이 있다면 언제든 수정할 수 있습니다.
+
+| <img src="https://github.com/user-attachments/assets/a86ea9d9-5658-4622-8794-6cfb932a5111" width="250" /> |
+|:---------------------------------------------------------------------------------------------------------:|
+|                                                   사진 댓글                                                   |
+
+- 사진에 댓글을 남겨 사진에 대한 이야기를 나눌 수 있습니다.
+
+- 댓글을 길게 눌러 댓글 내용을 수정하거나, 삭제할 수 있습니다.
+
 > **구현 중인 기능**
-> - 사진 클릭하여 크게 보기
-> - 사진 설명, 좋아요, 댓글 확인하기
 > - 다른 서브 앨범으로 사진 이동
 
 <br/>
