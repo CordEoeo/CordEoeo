@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.provider.MediaStore
-import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -19,10 +18,9 @@ import cord.eoeo.momentwo.data.model.DeletePhotos
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.UploadPhoto
 import cord.eoeo.momentwo.data.model.UriRequestBody
-import cord.eoeo.momentwo.data.photo.local.entity.PhotoEntity
 import cord.eoeo.momentwo.data.presigned.PresignedDataSource
 import cord.eoeo.momentwo.domain.photo.PhotoRepository
-import cord.eoeo.momentwo.ui.model.ImageItem
+import cord.eoeo.momentwo.ui.model.PhotoItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,7 +37,7 @@ class PhotoRepositoryImpl(
     private val contentResolver = applicationContext.contentResolver
 
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getPhotoPagingData(pageSize: Int, albumId: Int, subAlbumId: Int): Flow<PagingData<ImageItem>> {
+    override suspend fun getPhotoPagingData(pageSize: Int, albumId: Int, subAlbumId: Int): Flow<PagingData<PhotoItem>> {
         photoRemoteMediator.setParams(pageSize, albumId, subAlbumId)
 
         return Pager(
@@ -48,7 +46,7 @@ class PhotoRepositoryImpl(
             pagingSourceFactory = { photoLocalDataSource.getPhotoPagingSource(albumId, subAlbumId) },
         ).flow.map { photoPagingData ->
             photoPagingData.map { photoEntity ->
-                photoEntity.mapToImageItem()
+                photoEntity.mapToPhotoItem()
             }
         }
     }
@@ -67,7 +65,6 @@ class PhotoRepositoryImpl(
                 val filename = presignedUrl
                     .split("?").first()
                     .split("/").drop(3).joinToString("/")
-                Log.d("Photo", "filename: $filename")
 
                 presignedRemoteDataSource
                     .uploadPhoto(presignedUrl, uriRequestBody)
@@ -87,24 +84,19 @@ class PhotoRepositoryImpl(
     override suspend fun deletePhotos(
         albumId: Int,
         subAlbumId: Int,
-        imageIds: List<Int>,
-        imageUrls: List<String>
+        photoIds: List<Int>,
+        photoUrls: List<String>
     ): Result<Unit> {
         val deletePhotosResult =
-            photoRemoteDataSource.deletePhotos(DeletePhotos(albumId, subAlbumId, imageIds, imageUrls))
+            photoRemoteDataSource.deletePhotos(DeletePhotos(albumId, subAlbumId, photoIds, photoUrls))
         deletePhotosResult.onSuccess {
-            photoLocalDataSource.deletePhotos(
-                imageIds.mapIndexed { index, photoId ->
-                    PhotoEntity(
-                        id = photoId,
-                        albumId = albumId,
-                        subAlbumId = subAlbumId,
-                        imageUrl = imageUrls[index]
-                    )
-                }
-            )
+            photoLocalDataSource.deletePhotos(photoIds)
         }
         return deletePhotosResult
+    }
+
+    override suspend fun updateIsLiked(photoId: Int, isLiked: Boolean) {
+        photoLocalDataSource.updateIsLiked(photoId, isLiked)
     }
 
     override suspend fun downloadPhoto(imageUrl: String): Result<Unit> {

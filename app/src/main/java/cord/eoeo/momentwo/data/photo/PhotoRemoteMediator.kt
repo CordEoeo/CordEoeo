@@ -61,30 +61,61 @@ class PhotoRemoteMediator(
         photoRemoteDataSource
             .getPhotoPage(albumId, subAlbumId, pageSize, lastKey?.nextCursor ?: 0)
             .onSuccess { photoPage ->
+                if (photoPage.nextCursor == null) {
+                    photoLocalDataSource.insertKey(
+                        PhotoRemoteKeyEntity(
+                            albumId = albumId,
+                            subAlbumId = subAlbumId,
+                            lastUpdated = System.currentTimeMillis(),
+                            nextCursor = null,
+                        )
+                    )
+                    photoLocalDataSource.deleteByRange(
+                        emptyList(),
+                        lastKey?.nextCursor?.plus(1) ?: 0,
+                        photoLocalDataSource.getLastPhotoId() ?: 0
+                    )
+                    return MediatorResult.Success(endOfPaginationReached = true)
+                }
                 if (loadType == LoadType.REFRESH) {
                     photoLocalDataSource.clearKeys()
                 }
 
-                photoLocalDataSource.insertPhotos(
-                    photoPage.images.map { photoInfo ->
-                        PhotoEntity(
-                            id = photoInfo.id,
+                photoRemoteDataSource.getLikedPhoto(
+                    subAlbumId,
+                    photoPage.images.first().id,
+                    photoPage.images.last().id
+                ).onSuccess { likedPhotos ->
+                    val likedMap = likedPhotos.likesList.associate { it.photoId to true }
+                    val photoIds = photoPage.images.map { it.id }
+
+                    photoLocalDataSource.deleteByRange(photoIds, photoIds.first(), photoIds.last())
+
+                    photoLocalDataSource.insertPhotos(
+                        photoPage.images.map { photoInfo ->
+                            PhotoEntity(
+                                id = photoInfo.id,
+                                albumId = albumId,
+                                subAlbumId = subAlbumId,
+                                photoUrl = photoInfo.imageUrl,
+                                isLiked = likedMap[photoInfo.id] ?: false,
+                            )
+                        }
+                    )
+
+                    photoLocalDataSource.insertKey(
+                        PhotoRemoteKeyEntity(
                             albumId = albumId,
                             subAlbumId = subAlbumId,
-                            imageUrl = photoInfo.imageUrl,
+                            lastUpdated = System.currentTimeMillis(),
+                            nextCursor = photoPage.nextCursor,
                         )
-                    }
-                )
-                photoLocalDataSource.insertKey(
-                    PhotoRemoteKeyEntity(
-                        albumId = albumId,
-                        subAlbumId = subAlbumId,
-                        lastUpdated = System.currentTimeMillis(),
-                        nextCursor = photoPage.nextCursor,
                     )
-                )
 
-                return MediatorResult.Success(endOfPaginationReached = photoPage.nextCursor == null)
+                    return MediatorResult.Success(endOfPaginationReached = false)
+                }.onFailure { exception ->
+                    return MediatorResult.Error(exception)
+                }
             }.onFailure { exception ->
                 return MediatorResult.Error(exception)
             }
