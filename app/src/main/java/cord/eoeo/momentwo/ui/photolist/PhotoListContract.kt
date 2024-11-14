@@ -6,6 +6,7 @@ import cord.eoeo.momentwo.ui.UiEffect
 import cord.eoeo.momentwo.ui.UiEvent
 import cord.eoeo.momentwo.ui.UiState
 import cord.eoeo.momentwo.ui.model.ImageItem
+import cord.eoeo.momentwo.ui.model.PhotoItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
@@ -15,7 +16,7 @@ class PhotoListContract {
         val subAlbumId: Int = -1,
         val albumTitle: String = "",
         val subAlbumTitle: String = "",
-        val photoPagingData: Flow<PagingData<ImageItem>> = emptyFlow(),
+        val photoPagingData: Flow<PagingData<PhotoItem>> = emptyFlow(),
         val selectedPhotoIds: List<Int> = emptyList(),
         val selectedPhotoUrls: List<String> = emptyList(),
         val isMenuExpended: Boolean = false,
@@ -34,7 +35,7 @@ class PhotoListContract {
         data class OnChangeIsEditMode(val isEditMode: Boolean) : Event
         data object OnClickCancelEdit : Event
         data object OnClickConfirmEdit : Event
-        data class OnChangeIsSelected(val isSelected: Boolean, val imageItem: ImageItem) : Event
+        data class OnChangeIsSelected(val isSelected: Boolean, val photoItem: PhotoItem) : Event
         data class OnChangeIsDialogOpened(val isDialogOpened: Boolean) : Event
         data class OnConfirmDialog(val subAlbumTitle: String) : Event
         data object OnRefreshPagingData : Event

@@ -1,6 +1,7 @@
 package cord.eoeo.momentwo.data.photo.remote
 
 import cord.eoeo.momentwo.data.model.DeletePhotos
+import cord.eoeo.momentwo.data.model.LikedPhotoList
 import cord.eoeo.momentwo.data.model.PhotoPage
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.PresignedUrl
@@ -39,6 +40,13 @@ class PhotoRemoteDataSource(
         runCatching {
             withContext(dispatcher) {
                 photoService.deletePhotos(deletePhotos)
+            }
+        }
+
+    override suspend fun getLikedPhoto(subAlbumId: Int, minPid: Int, maxPid: Int): Result<LikedPhotoList> =
+        runCatching {
+            withContext(dispatcher) {
+                photoService.getLikedPhotos(subAlbumId, minPid, maxPid)
             }
         }
 }

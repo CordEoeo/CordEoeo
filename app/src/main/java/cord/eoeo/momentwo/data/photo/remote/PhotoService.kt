@@ -2,6 +2,7 @@ package cord.eoeo.momentwo.data.photo.remote
 
 import cord.eoeo.momentwo.data.MomentwoApi
 import cord.eoeo.momentwo.data.model.DeletePhotos
+import cord.eoeo.momentwo.data.model.LikedPhotoList
 import cord.eoeo.momentwo.data.model.PhotoPage
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.PresignedUrl
@@ -40,4 +41,11 @@ interface PhotoService {
     suspend fun postPhotoUpload(
         @Body uploadPhoto: UploadPhoto
     )
+
+    @GET(MomentwoApi.GET_LIKED_PHOTOS)
+    suspend fun getLikedPhotos(
+        @Query("subAlbumId") subAlbumId: Int,
+        @Query("minPid") minPid: Int,
+        @Query("maxPid") maxPid: Int,
+    ): LikedPhotoList
 }

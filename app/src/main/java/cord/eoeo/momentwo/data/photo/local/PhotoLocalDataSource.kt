@@ -18,15 +18,32 @@ class PhotoLocalDataSource(
     override fun getPhotoPagingSource(albumId: Int, subAlbumId: Int): PagingSource<Int, PhotoEntity> =
         photoDao.getPhotoPagingSource(albumId, subAlbumId)
 
+    override suspend fun getLastPhotoId(): Int? =
+        withContext(dispatcher) {
+            photoDao.getLastPhotoId()
+        }
+
     override suspend fun insertPhotos(photos: List<PhotoEntity>) {
         withContext(dispatcher) {
             photoDao.insertAll(*photos.toTypedArray())
         }
     }
 
-    override suspend fun deletePhotos(photos: List<PhotoEntity>) {
+    override suspend fun deletePhotos(photoIds: List<Int>) {
         withContext(dispatcher) {
-            photoDao.deleteAll(*photos.toTypedArray())
+            photoDao.deleteByIds(photoIds)
+        }
+    }
+
+    override suspend fun deleteByRange(photoIds: List<Int>, start: Int, end: Int) {
+        withContext(dispatcher) {
+            photoDao.deleteByRange(photoIds, start, end)
+        }
+    }
+
+    override suspend fun updateIsLiked(photoId: Int, isLiked: Boolean) {
+        withContext(dispatcher) {
+            photoDao.updateIsLiked(photoId, isLiked)
         }
     }
 

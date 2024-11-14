@@ -3,6 +3,7 @@ package cord.eoeo.momentwo.data.photo
 import android.graphics.Bitmap
 import androidx.paging.PagingSource
 import cord.eoeo.momentwo.data.model.DeletePhotos
+import cord.eoeo.momentwo.data.model.LikedPhotoList
 import cord.eoeo.momentwo.data.model.PhotoPage
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.PresignedUrl
@@ -20,14 +21,22 @@ interface PhotoDataSource {
         suspend fun requestUploadPhoto(uploadPhoto: UploadPhoto): Result<Unit>
 
         suspend fun deletePhotos(deletePhotos: DeletePhotos): Result<Unit>
+
+        suspend fun getLikedPhoto(subAlbumId: Int, minPid: Int, maxPid: Int): Result<LikedPhotoList>
     }
 
     interface Local {
         fun getPhotoPagingSource(albumId: Int, subAlbumId: Int): PagingSource<Int, PhotoEntity>
 
+        suspend fun getLastPhotoId(): Int?
+
         suspend fun insertPhotos(photos: List<PhotoEntity>)
 
-        suspend fun deletePhotos(photos: List<PhotoEntity>)
+        suspend fun deletePhotos(photoIds: List<Int>)
+
+        suspend fun deleteByRange(photoIds: List<Int>, start: Int, end: Int)
+
+        suspend fun updateIsLiked(photoId: Int, isLiked: Boolean)
 
         suspend fun downloadPhoto(bitmap: Bitmap, outputStream: OutputStream): Result<Unit>
 

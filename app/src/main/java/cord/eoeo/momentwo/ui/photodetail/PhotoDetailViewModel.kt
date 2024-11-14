@@ -8,6 +8,7 @@ import cord.eoeo.momentwo.data.comment.CommentRepository
 import cord.eoeo.momentwo.data.description.DescriptionRepository
 import cord.eoeo.momentwo.data.like.LikeRepository
 import cord.eoeo.momentwo.domain.photo.DownloadPhotoUseCase
+import cord.eoeo.momentwo.domain.photo.UpdateIsLikedUseCase
 import cord.eoeo.momentwo.ui.BaseViewModel
 import cord.eoeo.momentwo.ui.MomentwoDestination
 import cord.eoeo.momentwo.ui.model.DescriptionItem
@@ -21,18 +22,19 @@ class PhotoDetailViewModel @Inject constructor(
     private val likeRepository: LikeRepository,
     private val commentRepository: CommentRepository,
     private val downloadPhotoUseCase: DownloadPhotoUseCase,
+    private val updateIsLikedUseCase: UpdateIsLikedUseCase,
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel<PhotoDetailContract.State, PhotoDetailContract.Event, PhotoDetailContract.Effect>() {
     init {
-        val (albumId, subAlbumId, photoId, photoUrl) = savedStateHandle.toRoute<MomentwoDestination.PhotoDetail>()
+        val (albumId, photoId, photoUrl, isLiked) = savedStateHandle.toRoute<MomentwoDestination.PhotoDetail>()
 
         viewModelScope.launch {
             setState(
                 uiState.value.copy(
                     albumId = albumId,
-                    subAlbumId = subAlbumId,
                     photoId = photoId,
                     photoUrl = photoUrl,
+                    isLiked = isLiked,
                     commentPagingData = commentRepository.getCommentPagingData(albumId, photoId, 10),
                 )
             )
@@ -68,6 +70,8 @@ class PhotoDetailViewModel @Inject constructor(
                                     )
                                 )
                                 likeRepository.requestUndoLike(albumId, photoId)
+                            }.onSuccess {
+                                updateIsLikedUseCase(photoId, isLiked.not())
                             }.onFailure { exception ->
                                 // TODO
                                 Log.e("Desc", "OnToggleIsLiked Failure", exception)

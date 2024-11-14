@@ -36,7 +36,7 @@ import androidx.paging.compose.itemKey
 import coil.ImageLoader
 import cord.eoeo.momentwo.ui.SIDE_EFFECTS_KEY
 import cord.eoeo.momentwo.ui.composable.TextFieldDialog
-import cord.eoeo.momentwo.ui.model.ImageItem
+import cord.eoeo.momentwo.ui.model.PhotoItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -53,11 +53,11 @@ fun PhotoListScreen(
     effectFlow: () -> Flow<PhotoListContract.Effect>,
     onEvent: (event: PhotoListContract.Event) -> Unit,
     refreshState: () -> PullToRefreshState,
-    photoPagingData: () -> LazyPagingItems<ImageItem>,
+    photoPagingData: () -> LazyPagingItems<PhotoItem>,
     launchGallery: () -> Unit,
     snackbarHostState: () -> SnackbarHostState,
     popBackStack: () -> Unit,
-    navigateToPhotoDetail: (Int, Int, Int, String) -> Unit,
+    navigateToPhotoDetail: (Int, Int, String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(SIDE_EFFECTS_KEY) {
@@ -140,23 +140,24 @@ fun PhotoListScreen(
                     count = photoPagingData().itemCount,
                     key = photoPagingData().itemKey { it.id },
                 ) { index ->
-                    photoPagingData()[index]?.let { imageItem ->
+                    photoPagingData()[index]?.let { photoItem ->
                         PhotoListItemBox(
                             imageLoader = imageLoader,
-                            imageItem = { imageItem },
+                            photoItem = { photoItem },
                             isEditMode = { uiState().isEditMode },
-                            isSelected = { uiState().selectedPhotoIds.contains(imageItem.id) },
+                            isSelected = { uiState().selectedPhotoIds.contains(photoItem.id) },
                             onChangeSelected = { isSelected ->
-                                onEvent(PhotoListContract.Event.OnChangeIsSelected(isSelected, imageItem))
+                                onEvent(PhotoListContract.Event.OnChangeIsSelected(isSelected, photoItem))
                             },
                             onClick = {
                                 navigateToPhotoDetail(
                                     uiState().albumId,
-                                    uiState().subAlbumId,
-                                    imageItem.id,
-                                    imageItem.imageUrl,
+                                    photoItem.id,
+                                    photoItem.photoUrl,
+                                    photoItem.isLiked,
                                 )
                             },
+                            modifier = Modifier.animateItem(),
                         )
                     }
                 }

@@ -15,7 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.ImageLoader
-import cord.eoeo.momentwo.ui.model.ImageItem
+import cord.eoeo.momentwo.ui.model.PhotoItem
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,14 +24,14 @@ fun PhotoListRoute(
     coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     popBackStack: () -> Unit,
-    navigateToPhotoDetail: (Int, Int, Int, String) -> Unit,
+    navigateToPhotoDetail: (Int, Int, String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
     viewModel: PhotoListViewModel = hiltViewModel(),
 ) {
     val uiState: PhotoListContract.State by viewModel.uiState.collectAsStateWithLifecycle()
     val refreshState: PullToRefreshState = rememberPullToRefreshState()
-    val photoPagingData: LazyPagingItems<ImageItem> = uiState.photoPagingData.collectAsLazyPagingItems()
+    val photoPagingData: LazyPagingItems<PhotoItem> = uiState.photoPagingData.collectAsLazyPagingItems()
     val galleryLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let { imageUri ->
             viewModel.setEvent(
