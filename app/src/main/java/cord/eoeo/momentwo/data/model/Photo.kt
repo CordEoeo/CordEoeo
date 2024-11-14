@@ -28,3 +28,17 @@ data class PhotoInfo(
     val id: Int,
     val imageUrl: String
 )
+
+@JsonClass(generateAdapter = true)
+data class LikedPhotoList(
+    val likesList: List<LikedPhoto>
+)
+
+@JsonClass(generateAdapter = true)
+data class LikedPhoto(
+    val albumId: Int,
+    val subAlbumId: Int,
+    val photoId: Int,
+    val nickname: String,
+    val likesStatus: Boolean
+)
