@@ -6,6 +6,7 @@ val white = Color(0xFFFFFFFF)
 val black = Color(0xFF000000)
 val darkGray = Color(0xFF43474E)
 val starYellow = Color(0xFFF5B700)
+val favoriteBorder = Color(0xFFD9DAE1)
 
 val primaryLight = Color(0xFF3A608F)
 val onPrimaryLight = white
