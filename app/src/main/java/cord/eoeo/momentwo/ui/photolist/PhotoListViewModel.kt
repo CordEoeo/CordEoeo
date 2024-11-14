@@ -93,7 +93,6 @@ class PhotoListViewModel @Inject constructor(
                                         selectedPhotoUrls = emptyList(),
                                     )
                                 )
-                                setEffect { PhotoListContract.Effect.RefreshPagingData }
                             }.onFailure {
                                 /* TODO: 삭제 실패 */
                                 Log.e("Photo", "deletePhotos Failure", it)
@@ -109,11 +108,11 @@ class PhotoListViewModel @Inject constructor(
                         val newSelectedUrls = selectedPhotoUrls.toMutableList()
 
                         if (newEvent.isSelected) {
-                            newSelectedIds.add(newEvent.imageItem.id)
-                            newSelectedUrls.add(newEvent.imageItem.imageUrl)
+                            newSelectedIds.add(newEvent.photoItem.id)
+                            newSelectedUrls.add(newEvent.photoItem.photoUrl)
                         } else {
-                            newSelectedIds.remove(newEvent.imageItem.id)
-                            newSelectedUrls.remove(newEvent.imageItem.imageUrl)
+                            newSelectedIds.remove(newEvent.photoItem.id)
+                            newSelectedUrls.remove(newEvent.photoItem.photoUrl)
                         }
 
                         setState(copy(selectedPhotoIds = newSelectedIds, selectedPhotoUrls = newSelectedUrls))

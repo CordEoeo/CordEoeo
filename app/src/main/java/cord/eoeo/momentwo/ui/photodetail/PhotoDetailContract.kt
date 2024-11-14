@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.emptyFlow
 class PhotoDetailContract {
     data class State(
         val albumId: Int = -1,
-        val subAlbumId: Int = -1,
         val photoId: Int = -1,
         val photoUrl: String = "",
         val descriptionItem: DescriptionItem = DescriptionItem("", "", "", ""),
