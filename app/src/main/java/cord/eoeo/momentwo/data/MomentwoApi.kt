@@ -48,6 +48,8 @@ object MomentwoApi {
     const val GET_PHOTO_PAGE = "/photos/view/{albumId}/{subAlbumId}"
     const val POST_PHOTO_PRESIGNED = "/images/photos/presigned"
     const val POST_PHOTO_UPLOAD = "/photos/upload"
+    /** Require @Query("subAlbumId"), @Query("minPid"), @Query("maxPid") */
+    const val GET_LIKED_PHOTOS = "/photo/likes/status/search"
 
     // Description
     const val POST_CREATE_DESCRIPTION = "/descriptions/create"
