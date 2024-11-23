@@ -1,6 +1,5 @@
 package cord.eoeo.momentwo.ui.friend.friendrequest
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,16 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LifecycleStartEffect
+import coil.ImageLoader
 import cord.eoeo.momentwo.ui.RESUME_EFFECTS_KEY
 import cord.eoeo.momentwo.ui.START_EFFECTS_KEY
 import cord.eoeo.momentwo.ui.model.FriendRequestItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FriendRequestScreen(
     coroutineScope: CoroutineScope,
+    imageLoader: ImageLoader,
     receivedRequests: () -> List<FriendRequestItem>,
     sentRequests: () -> List<FriendRequestItem>,
     isReceivedListChanged: () -> Boolean,
@@ -63,14 +63,14 @@ fun FriendRequestScreen(
         HorizontalPager(
             state = pagerState(),
             beyondViewportPageCount = 1,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
         ) { page ->
             when (page) {
                 0 -> {
                     ReceivedRequestScreen(
+                        imageLoader = imageLoader,
                         receivedRequests = receivedRequests,
                         isReceivedListChanged = isReceivedListChanged,
                         getReceivedRequests = getReceivedRequests,
@@ -81,6 +81,7 @@ fun FriendRequestScreen(
 
                 1 -> {
                     SentRequestScreen(
+                        imageLoader = imageLoader,
                         sentRequests = sentRequests,
                         isSentListChanged = isSentListChanged,
                         getSentRequests = getSentRequests,
@@ -94,6 +95,7 @@ fun FriendRequestScreen(
 
 @Composable
 fun ReceivedRequestScreen(
+    imageLoader: ImageLoader,
     receivedRequests: () -> List<FriendRequestItem>,
     isReceivedListChanged: () -> Boolean,
     getReceivedRequests: () -> Unit,
@@ -110,6 +112,7 @@ fun ReceivedRequestScreen(
     ) {
         itemsIndexed(items = receivedRequests(), key = { _, item -> item.nickname }) { index, friendRequestItem ->
             ReceivedFriendRequestItem(
+                imageLoader = imageLoader,
                 item = { friendRequestItem },
                 onClickAccept = { onClickAccept(index, friendRequestItem.nickname) },
                 onClickReject = { onClickReject(index, friendRequestItem.nickname) },
@@ -120,6 +123,7 @@ fun ReceivedRequestScreen(
 
 @Composable
 fun SentRequestScreen(
+    imageLoader: ImageLoader,
     sentRequests: () -> List<FriendRequestItem>,
     isSentListChanged: () -> Boolean,
     getSentRequests: () -> Unit,
@@ -135,6 +139,7 @@ fun SentRequestScreen(
     ) {
         itemsIndexed(items = sentRequests(), key = { _, item -> item.nickname }) { index, friendRequestItem ->
             SentFriendRequestItem(
+                imageLoader = imageLoader,
                 item = { friendRequestItem },
                 onClickCancel = { onClickCancel(index, friendRequestItem.nickname) },
             )
