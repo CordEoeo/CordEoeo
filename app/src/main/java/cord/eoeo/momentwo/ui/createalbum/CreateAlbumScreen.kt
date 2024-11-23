@@ -1,6 +1,5 @@
 package cord.eoeo.momentwo.ui.createalbum
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,7 +44,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CreateAlbumScreen(
     coroutineScope: CoroutineScope,
@@ -149,7 +147,7 @@ fun CreateAlbumScreen(
             ) {
                 items(items = uiState().selectedFriendList, key = { it.nickname }) { friendItem ->
                     UserItemBox(
-                        userItem = { UserItem(0, friendItem.nickname) },
+                        userItem = { UserItem(0, friendItem.nickname, friendItem.userProfileImage) },
                         onClickClear = { onEvent(CreateAlbumContract.Event.OnClearFriendItem(it)) },
                         modifier =
                             Modifier

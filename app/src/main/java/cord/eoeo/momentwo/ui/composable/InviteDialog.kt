@@ -1,6 +1,5 @@
 package cord.eoeo.momentwo.ui.composable
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -62,7 +61,7 @@ fun InviteDialog(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InviteDialogScreen(
     searchQuery: () -> String,
@@ -122,7 +121,7 @@ fun InviteDialogScreen(
                     ) {
                         items(items = selectedFriendList(), key = { it.nickname }) { friendItem ->
                             UserItemBox(
-                                userItem = { UserItem(0, friendItem.nickname) },
+                                userItem = { UserItem(0, friendItem.nickname, "") },
                                 onClickClear = { onCheckedChange(false, friendItem) },
                                 modifier = Modifier
                                     .animateItem()
