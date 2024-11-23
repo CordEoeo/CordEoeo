@@ -25,10 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.ImageLoader
+import cord.eoeo.momentwo.ui.composable.CircleAsyncImage
 import cord.eoeo.momentwo.ui.model.FriendRequestItem
 
 @Composable
 fun ReceivedFriendRequestItem(
+    imageLoader: ImageLoader,
     item: () -> FriendRequestItem,
     onClickAccept: () -> Unit,
     onClickReject: () -> Unit,
@@ -36,6 +39,7 @@ fun ReceivedFriendRequestItem(
     var isAccepted: Boolean by remember { mutableStateOf(false) }
 
     ReceivedFriendRequestItemScreen(
+        imageLoader = imageLoader,
         item = item,
         isAccepted = { isAccepted },
         onClickAccept = {
@@ -48,35 +52,44 @@ fun ReceivedFriendRequestItem(
 
 @Composable
 fun ReceivedFriendRequestItemScreen(
+    imageLoader: ImageLoader,
     item: () -> FriendRequestItem,
     isAccepted: () -> Boolean,
     onClickAccept: () -> Unit,
     onClickReject: () -> Unit,
 ) {
     Row(
-        modifier =
-            Modifier
-                .height(60.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
+        CircleAsyncImage(
+            model = item().userProfileImage,
+            contentDescription = "유저 프로필 이미지",
+            imageLoader = imageLoader,
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxHeight(),
+        )
+
         Icon(
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "",
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
+            modifier = Modifier
+                .fillMaxHeight()
+                .aspectRatio(1f),
         )
+
         Text(
             text = item().nickname,
             fontSize = 16.sp,
-            modifier =
-                Modifier
-                    .fillMaxHeight()
-                    .wrapContentHeight(align = Alignment.CenterVertically)
-                    .weight(1f)
-                    .padding(start = 8.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .wrapContentHeight(align = Alignment.CenterVertically)
+                .weight(1f)
+                .padding(start = 8.dp),
         )
 
         if (item().isUpdated.not()) {
@@ -87,6 +100,7 @@ fun ReceivedFriendRequestItemScreen(
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }
+
             IconButton(onClick = onClickReject) {
                 Icon(
                     imageVector = Icons.Default.Clear,
@@ -99,11 +113,10 @@ fun ReceivedFriendRequestItemScreen(
                 text = if (isAccepted()) "요청 수락됨" else "요청 거절됨",
                 color = Color.Gray,
                 fontSize = 14.sp,
-                modifier =
-                    Modifier
-                        .fillMaxHeight()
-                        .wrapContentHeight(align = Alignment.CenterVertically)
-                        .padding(end = 16.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .padding(end = 16.dp),
             )
         }
     }

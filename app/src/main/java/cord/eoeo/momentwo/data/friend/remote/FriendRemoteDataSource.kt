@@ -1,9 +1,10 @@
 package cord.eoeo.momentwo.data.friend.remote
 
 import cord.eoeo.momentwo.data.friend.FriendDataSource
-import cord.eoeo.momentwo.data.model.FriendList
+import cord.eoeo.momentwo.data.model.FriendPage
 import cord.eoeo.momentwo.data.model.FriendRequestResponse
 import cord.eoeo.momentwo.data.model.ReceivedFriendRequestList
+import cord.eoeo.momentwo.data.model.SearchUser
 import cord.eoeo.momentwo.data.model.SentFriendRequestList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +13,7 @@ import kotlinx.coroutines.withContext
 class FriendRemoteDataSource(
     private val friendService: FriendService,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : FriendDataSource {
+) : FriendDataSource.Remote {
     override suspend fun sendFriendRequest(nickname: String): Result<Unit> =
         runCatching {
             withContext(dispatcher) {
@@ -37,10 +38,10 @@ class FriendRemoteDataSource(
             }
         }
 
-    override suspend fun getFriendList(): Result<FriendList> =
+    override suspend fun getFriendPage(size: Int, cursor: Int): Result<FriendPage> =
         runCatching {
             withContext(dispatcher) {
-                friendService.getFriendList()
+                friendService.getFriendList(size, cursor)
             }
         }
 
@@ -55,6 +56,13 @@ class FriendRemoteDataSource(
         runCatching {
             withContext(dispatcher) {
                 friendService.getReceivedRequests()
+            }
+        }
+
+    override suspend fun getSearchUsers(nickname: String, page: Int, size: Int): Result<SearchUser> =
+        runCatching {
+            withContext(dispatcher) {
+                friendService.getSearchUsers(nickname, page, size)
             }
         }
 }

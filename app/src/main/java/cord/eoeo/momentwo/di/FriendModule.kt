@@ -1,10 +1,15 @@
 package cord.eoeo.momentwo.di
 
+import cord.eoeo.momentwo.data.MomentwoDatabase
 import cord.eoeo.momentwo.data.friend.FriendDataSource
-import cord.eoeo.momentwo.domain.friend.FriendRepository
+import cord.eoeo.momentwo.data.friend.FriendRemoteMediator
 import cord.eoeo.momentwo.data.friend.FriendRepositoryImpl
+import cord.eoeo.momentwo.data.friend.local.FriendDao
+import cord.eoeo.momentwo.data.friend.local.FriendLocalDataSource
+import cord.eoeo.momentwo.data.friend.local.FriendRemoteKeyDao
 import cord.eoeo.momentwo.data.friend.remote.FriendRemoteDataSource
 import cord.eoeo.momentwo.data.friend.remote.FriendService
+import cord.eoeo.momentwo.domain.friend.FriendRepository
 import cord.eoeo.momentwo.domain.friend.GetFriendListUseCase
 import dagger.Module
 import dagger.Provides
@@ -18,17 +23,50 @@ import javax.inject.Singleton
 object FriendModule {
     @Provides
     @Singleton
+    fun provideFriendDao(database: MomentwoDatabase): FriendDao = database.friendDao()
+
+    @Provides
+    @Singleton
+    fun provideFriendRemoteKeyDao(database: MomentwoDatabase): FriendRemoteKeyDao = database.friendRemoteKeyDao()
+
+    @Provides
+    @Singleton
     fun provideFriendService(retrofit: Retrofit): FriendService = retrofit.create(FriendService::class.java)
 
     @Provides
     @Singleton
-    fun provideFriendRemoteDataSource(friendService: FriendService): FriendDataSource = FriendRemoteDataSource(friendService)
+    @QualifierModule.RemoteDataSource
+    fun provideFriendRemoteDataSource(friendService: FriendService): FriendDataSource.Remote =
+        FriendRemoteDataSource(friendService)
 
     @Provides
     @Singleton
-    fun provideFriendRepository(friendRemoteDataSource: FriendDataSource): FriendRepository = FriendRepositoryImpl(friendRemoteDataSource)
+    @QualifierModule.LocalDataSource
+    fun provideFriendLocalDataSource(
+        friendDao: FriendDao,
+        friendRemoteKeyDao: FriendRemoteKeyDao
+    ): FriendDataSource.Local =
+        FriendLocalDataSource(friendDao, friendRemoteKeyDao)
 
     @Provides
     @Singleton
-    fun provideGetFriendListUseCase(friendRepository: FriendRepository) = GetFriendListUseCase(friendRepository)
+    fun provideFriendRemoteMediator(
+        @QualifierModule.RemoteDataSource friendRemoteDataSource: FriendDataSource.Remote,
+        @QualifierModule.LocalDataSource friendLocalDataSource: FriendDataSource.Local,
+    ): FriendRemoteMediator =
+        FriendRemoteMediator(friendRemoteDataSource, friendLocalDataSource)
+
+    @Provides
+    @Singleton
+    fun provideFriendRepository(
+        @QualifierModule.RemoteDataSource friendRemoteDataSource: FriendDataSource.Remote,
+        @QualifierModule.LocalDataSource friendLocalDataSource: FriendDataSource.Local,
+        friendRemoteMediator: FriendRemoteMediator,
+    ): FriendRepository =
+        FriendRepositoryImpl(friendRemoteDataSource, friendLocalDataSource, friendRemoteMediator)
+
+    @Provides
+    @Singleton
+    fun provideGetFriendListUseCase(friendRepository: FriendRepository) =
+        GetFriendListUseCase(friendRepository)
 }

@@ -1,16 +1,16 @@
 package cord.eoeo.momentwo.ui.friend.friendrequest
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import coil.ImageLoader
 import cord.eoeo.momentwo.ui.model.FriendRequestItem
 import kotlinx.coroutines.CoroutineScope
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FriendRequestRoute(
     coroutineScope: CoroutineScope,
+    imageLoader: ImageLoader,
     receivedRequests: () -> List<FriendRequestItem>,
     sentRequests: () -> List<FriendRequestItem>,
     isReceivedListChanged: () -> Boolean,
@@ -24,6 +24,7 @@ fun FriendRequestRoute(
 ) {
     FriendRequestScreen(
         coroutineScope = coroutineScope,
+        imageLoader = imageLoader,
         receivedRequests = receivedRequests,
         sentRequests = sentRequests,
         isReceivedListChanged = isReceivedListChanged,

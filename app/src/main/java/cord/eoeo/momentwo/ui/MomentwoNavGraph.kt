@@ -94,6 +94,7 @@ fun MomentwoNavGraph(
             FriendRoute(
                 coroutineScope = coroutineScope,
                 popBackStack = navActions.popBackStack,
+                imageLoader = imageLoader,
             )
         }
     }
