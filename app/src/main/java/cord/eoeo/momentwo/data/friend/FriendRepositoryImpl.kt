@@ -1,80 +1,79 @@
 package cord.eoeo.momentwo.data.friend
 
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
+import cord.eoeo.momentwo.data.friend.remote.SearchUserPagingSource
 import cord.eoeo.momentwo.domain.friend.FriendRepository
 import cord.eoeo.momentwo.ui.model.FriendItem
 import cord.eoeo.momentwo.ui.model.FriendRequestItem
+import cord.eoeo.momentwo.ui.model.UserItem
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class FriendRepositoryImpl(
-    private val friendRemoteDataSource: FriendDataSource,
+    private val friendRemoteDataSource: FriendDataSource.Remote,
+    private val friendLocalDataSource: FriendDataSource.Local,
+    private val friendRemoteMediator: FriendRemoteMediator,
 ) : FriendRepository {
-    override suspend fun sendFriendRequest(nickname: String): Result<Unit> {
-        return friendRemoteDataSource.sendFriendRequest(nickname)
-        // return Result.success(Unit)
-    }
+    override suspend fun sendFriendRequest(nickname: String): Result<Unit> =
+        friendRemoteDataSource.sendFriendRequest(nickname)
 
-    override suspend fun responseFriendRequest(
-        nickname: String,
-        isAccepted: Boolean,
-    ): Result<Unit> {
-        return friendRemoteDataSource.responseFriendRequest(nickname, isAccepted)
-        // return Result.success(Unit)
-    }
+    override suspend fun responseFriendRequest(nickname: String, isAccepted: Boolean): Result<Unit> =
+        friendRemoteDataSource.responseFriendRequest(nickname, isAccepted)
 
-    override suspend fun cancelFriendRequest(nickname: String): Result<Unit> {
-        return friendRemoteDataSource.cancelFriendRequest(nickname)
-        // return Result.success(Unit)
-    }
+    override suspend fun cancelFriendRequest(nickname: String): Result<Unit> =
+        friendRemoteDataSource.cancelFriendRequest(nickname)
 
-    override suspend fun getFriendList(): Result<List<FriendItem>> {
-        return friendRemoteDataSource
-            .getFriendList()
-            .map { friendList ->
-                friendList.friends.map {
-                    it.mapToFriendItem()
-                }
+    @OptIn(ExperimentalPagingApi::class)
+    override suspend fun getFriendPage(size: Int): Flow<PagingData<FriendItem>> {
+        friendRemoteMediator.setParams(size)
+
+        return Pager(
+            config = PagingConfig(pageSize = size),
+            remoteMediator = friendRemoteMediator,
+            pagingSourceFactory = { friendLocalDataSource.getPhotoPagingSource() },
+        ).flow.map { friendPagingData ->
+            friendPagingData.map { friendEntity ->
+                friendEntity.mapToFriendItem()
             }
-        /*return Result.success(
-            listOf(
-                FriendItem("user1"),
-                FriendItem("user2"),
-                FriendItem("user3"),
-                FriendItem("user4"),
-                FriendItem("user5"),
-            ),
-        )*/
+        }
     }
 
-    override suspend fun getSentRequests(): Result<List<FriendRequestItem>> {
-        return friendRemoteDataSource
+    override suspend fun getFriendList(): Result<List<FriendItem>> =
+        friendLocalDataSource.getFriendList().map { friendList ->
+            friendList.map { friendEntity ->
+                friendEntity.mapToFriendItem()
+            }
+        }
+
+    override suspend fun getSentRequests(): Result<List<FriendRequestItem>> =
+        friendRemoteDataSource
             .getSentRequests()
             .map { sentRequests ->
                 sentRequests.sentList.map {
                     it.mapToFriendRequestItem()
                 }
             }
-        /*return Result.success(
-            listOf(
-                FriendRequestItem("user6", false),
-                FriendRequestItem("user7", false),
-                FriendRequestItem("user8", false),
-            ),
-        )*/
-    }
 
-    override suspend fun getReceivedRequests(): Result<List<FriendRequestItem>> {
-        return friendRemoteDataSource
+    override suspend fun getReceivedRequests(): Result<List<FriendRequestItem>> =
+        friendRemoteDataSource
             .getReceivedRequests()
             .map { receivedRequests ->
                 receivedRequests.receivedList.map {
                     it.mapToFriendRequestItem()
                 }
             }
-        /*return Result.success(
-            listOf(
-                FriendRequestItem("user9", false),
-                FriendRequestItem("user10", false),
-                FriendRequestItem("user11", false),
-            ),
-        )*/
-    }
+
+    override suspend fun getSearchUsers(nickname: String, size: Int): Flow<PagingData<UserItem>> =
+        Pager(
+            config = PagingConfig(pageSize = size),
+            pagingSourceFactory = { SearchUserPagingSource(friendRemoteDataSource, nickname, size) }
+        ).flow.map { searchUserPagingData ->
+            searchUserPagingData.map { searchUserInfo ->
+                searchUserInfo.mapToUserItem()
+            }
+        }
 }
