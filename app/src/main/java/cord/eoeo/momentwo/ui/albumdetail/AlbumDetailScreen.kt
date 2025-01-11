@@ -126,9 +126,9 @@ fun AlbumDetailScreen(
                     onEvent(
                         AlbumDetailContract.Event.OnSubAlbumEvents(
                             AlbumDetailContract.SubAlbumEvents.Create(
-                                subAlbumTitle = it
-                            )
-                        )
+                                subAlbumTitle = it,
+                            ),
+                        ),
                     )
                 },
             ),
@@ -139,9 +139,9 @@ fun AlbumDetailScreen(
                     onEvent(
                         AlbumDetailContract.Event.OnAlbumSettingEvents(
                             AlbumDetailContract.AlbumSettingEvents.EditTitle(
-                                title = it
-                            )
-                        )
+                                title = it,
+                            ),
+                        ),
                     )
                 },
                 placeholder = uiState().albumItem.title,
@@ -153,9 +153,9 @@ fun AlbumDetailScreen(
                     onEvent(
                         AlbumDetailContract.Event.OnAlbumSettingEvents(
                             AlbumDetailContract.AlbumSettingEvents.EditSubTitle(
-                                subTitle = it
-                            )
-                        )
+                                subTitle = it,
+                            ),
+                        ),
                     )
                 },
                 placeholder = uiState().albumItem.subTitle,
@@ -171,7 +171,7 @@ fun AlbumDetailScreen(
                     AlbumDetailContract.Event.OnChangeFriendSelected(
                         isSelected = isChecked,
                         friendItem = friendItem,
-                    )
+                    ),
                 )
             },
             getIsChecked = { uiState().selectedFriendList.contains(it) },
@@ -188,7 +188,7 @@ fun AlbumDetailScreen(
             description = { item.description },
             onDismiss = { onEvent(AlbumDetailContract.Event.OnDismissTextFieldDialog) },
             onConfirm = item.onConfirm,
-            placeholder = { item.placeholder }
+            placeholder = { item.placeholder },
         )
     }
 
@@ -219,8 +219,8 @@ fun AlbumDetailScreen(
                 onClickChangeImage = {
                     onEvent(
                         AlbumDetailContract.Event.OnAlbumSettingEvents(
-                            AlbumDetailContract.AlbumSettingEvents.ChangeImage
-                        )
+                            AlbumDetailContract.AlbumSettingEvents.ChangeImage,
+                        ),
                     )
                 },
                 scrollBehavior = scrollBehavior,
@@ -231,19 +231,21 @@ fun AlbumDetailScreen(
                 items = { navItems },
                 selectedNavIndex = { uiState().selectedNavIndex },
                 onChangeNavIndex = { onEvent(AlbumDetailContract.Event.OnChangeNavIndex(it)) },
-                onChangeIsInChangeImage = { onEvent(AlbumDetailContract.Event.OnChangeIsInChangeImage(false)) }
+                onChangeIsInChangeImage = { onEvent(AlbumDetailContract.Event.OnChangeIsInChangeImage(false)) },
             )
         },
-        modifier = Modifier
-            .nestedScroll(scrollBehavior.nestedScrollConnection)
-            .fillMaxSize(),
+        modifier =
+            Modifier
+                .nestedScroll(scrollBehavior.nestedScrollConnection)
+                .fillMaxSize(),
     ) { paddingValues ->
         NavHost(
             navController = navController,
             startDestination = AlbumDetailDestination.SubAlbumList,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             composable<AlbumDetailDestination.SubAlbumList> {
                 SubAlbumListScreen(
@@ -264,8 +266,8 @@ fun AlbumDetailScreen(
                         onEvent(
                             AlbumDetailContract.Event.OnChangeSubAlbumSelected(
                                 isSelected = isSelected,
-                                subAlbumId = subAlbumId
-                            )
+                                subAlbumId = subAlbumId,
+                            ),
                         )
                     },
                     onBack = {
@@ -284,13 +286,13 @@ fun AlbumDetailScreen(
                     isEditMode = { uiState().isEditMode },
                     getMembers = { onEvent(AlbumDetailContract.Event.OnMemberEvents(AlbumDetailContract.MemberEvents.GetMembers)) },
                     getFriends = { onEvent(AlbumDetailContract.Event.OnGetFriendList) },
-                    getIsSelected = { uiState().selectedMemberNicknames.contains(it) },
-                    onChangeMemberSelected = { isSelected, memberNickname ->
+                    getIsSelected = { uiState().selectedMemberIds.contains(it) },
+                    onChangeMemberSelected = { isSelected, memberId ->
                         onEvent(
                             AlbumDetailContract.Event.OnChangeMemberSelected(
                                 isSelected = isSelected,
-                                memberNickname = memberNickname,
-                            )
+                                memberId = memberId,
+                            ),
                         )
                     },
                     onBack = {
