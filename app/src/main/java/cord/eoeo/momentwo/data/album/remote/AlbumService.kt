@@ -10,10 +10,8 @@ import cord.eoeo.momentwo.data.model.EditAlbumTitle
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.PresignedUrl
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
+import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.HTTP
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -26,28 +24,26 @@ interface AlbumService {
         @Body createAlbumInfo: CreateAlbumInfo,
     )
 
-    @FormUrlEncoded
-    @HTTP(method = "DELETE", path = MomentwoApi.DELETE_ALBUM, hasBody = true)
+    @DELETE(MomentwoApi.DELETE_ALBUM)
     suspend fun deleteAlbum(
-        @Field("albumId") albumId: Int,
+        @Path("albumId") albumId: Int,
     )
 
     @Headers("content-type: application/json")
     @POST(MomentwoApi.POST_ALBUM_PRESIGNED)
     suspend fun postAlbumPresigned(
-        @Body presignedRequest: PresignedRequest
+        @Body presignedRequest: PresignedRequest,
     ): PresignedUrl
 
     @Headers("content-type: application/json")
-    @POST(MomentwoApi.PUT_ALBUM_IMAGE)
+    @POST(MomentwoApi.POST_ALBUM_IMAGE)
     suspend fun putAlbumImage(
         @Body albumImage: AlbumImage,
     )
 
-    @FormUrlEncoded
-    @HTTP(method = "DELETE", path = MomentwoApi.DELETE_ALBUM_IMAGE, hasBody = true)
+    @DELETE(MomentwoApi.DELETE_ALBUM_IMAGE)
     suspend fun deleteAlbumImage(
-        @Field("albumId") albumId: Int,
+        @Path("albumId") albumId: Int,
     )
 
     @Headers("content-type: application/json")
@@ -56,10 +52,9 @@ interface AlbumService {
         @Body albumSubTitle: AlbumSubTitle,
     )
 
-    @FormUrlEncoded
-    @HTTP(method = "DELETE", path = MomentwoApi.DELETE_ALBUM_SUBTITLE, hasBody = true)
+    @DELETE(MomentwoApi.DELETE_ALBUM_SUBTITLE)
     suspend fun deleteAlbumSubTitle(
-        @Field("albumId") albumId: Int,
+        @Path("albumId") albumId: Int,
     )
 
     @Headers("content-type: application/json")

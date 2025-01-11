@@ -8,9 +8,9 @@ import cord.eoeo.momentwo.data.model.AlbumSubTitle
 import cord.eoeo.momentwo.data.model.CreateAlbumInfo
 import cord.eoeo.momentwo.data.model.EditAlbumTitle
 import cord.eoeo.momentwo.data.model.PresignedRequest
+import cord.eoeo.momentwo.data.model.UriRequestBody
 import cord.eoeo.momentwo.data.presigned.PresignedDataSource
 import cord.eoeo.momentwo.domain.album.AlbumRepository
-import cord.eoeo.momentwo.data.model.UriRequestBody
 import cord.eoeo.momentwo.ui.model.AlbumItem
 import cord.eoeo.momentwo.ui.model.MemberAuth
 
@@ -32,13 +32,18 @@ class AlbumRepositoryImpl(
     ): Result<Unit> {
         val uriRequestBody = UriRequestBody(applicationContext.contentResolver, profileImage)
 
-        albumRemoteDataSource.requestPresignedUrl(
-            PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: "")
-        ).map { it.presignedUrl }
+        albumRemoteDataSource
+            .requestPresignedUrl(
+                PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: ""),
+            ).map { it.presignedUrl }
             .onSuccess { presignedUrl ->
-                val filename = presignedUrl
-                    .split("?").first()
-                    .split("/").drop(3).joinToString("/")
+                val filename =
+                    presignedUrl
+                        .split("?")
+                        .first()
+                        .split("/")
+                        .drop(3)
+                        .joinToString("/")
                 Log.d("Album", "filename: $filename")
 
                 presignedRemoteDataSource
@@ -61,8 +66,7 @@ class AlbumRepositoryImpl(
         subTitle: String,
     ): Result<Unit> = albumRemoteDataSource.changeAlbumSubTitle(AlbumSubTitle(albumId, subTitle))
 
-    override suspend fun deleteAlbumSubTitle(albumId: Int): Result<Unit> =
-        albumRemoteDataSource.deleteAlbumSubTitle(albumId)
+    override suspend fun deleteAlbumSubTitle(albumId: Int): Result<Unit> = albumRemoteDataSource.deleteAlbumSubTitle(albumId)
 
     override suspend fun changeAlbumTitle(
         albumId: Int,
@@ -76,6 +80,6 @@ class AlbumRepositoryImpl(
 
     override suspend fun getAlbumRole(albumId: Int): Result<MemberAuth> =
         albumRemoteDataSource.getAlbumRole(albumId).map { albumRole ->
-            albumRole.rules.mapToMemberAuth()
+            MemberAuth.fromRoleString(albumRole.rules)
         }
 }
