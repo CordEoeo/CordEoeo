@@ -5,4 +5,5 @@ data class DescriptionItem(
     val userProfileImage: String,
     val description: String,
     val date: String,
+    val photoTags: List<String>,
 )
