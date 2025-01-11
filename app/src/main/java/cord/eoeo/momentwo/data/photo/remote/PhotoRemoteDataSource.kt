@@ -1,6 +1,5 @@
 package cord.eoeo.momentwo.data.photo.remote
 
-import cord.eoeo.momentwo.data.model.DeletePhotos
 import cord.eoeo.momentwo.data.model.LikedPhotoList
 import cord.eoeo.momentwo.data.model.PhotoPage
 import cord.eoeo.momentwo.data.model.PresignedRequest
@@ -13,9 +12,14 @@ import kotlinx.coroutines.withContext
 
 class PhotoRemoteDataSource(
     private val photoService: PhotoService,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : PhotoDataSource.Remote {
-    override suspend fun getPhotoPage(albumId: Int, subAlbumId: Int, pageSize: Int, cursor: Int): Result<PhotoPage> =
+    override suspend fun getPhotoPage(
+        albumId: Int,
+        subAlbumId: Int,
+        pageSize: Int,
+        cursor: Int,
+    ): Result<PhotoPage> =
         runCatching {
             withContext(dispatcher) {
                 photoService.getPhotoPage(albumId, subAlbumId, pageSize, cursor)
@@ -36,14 +40,22 @@ class PhotoRemoteDataSource(
             }
         }
 
-    override suspend fun deletePhotos(deletePhotos: DeletePhotos): Result<Unit> =
+    override suspend fun deletePhotos(
+        albumId: Int,
+        subAlbumId: Int,
+        imageIds: String,
+    ): Result<Unit> =
         runCatching {
             withContext(dispatcher) {
-                photoService.deletePhotos(deletePhotos)
+                photoService.deletePhotos(albumId, subAlbumId, imageIds)
             }
         }
 
-    override suspend fun getLikedPhoto(subAlbumId: Int, minPid: Int, maxPid: Int): Result<LikedPhotoList> =
+    override suspend fun getLikedPhoto(
+        subAlbumId: Int,
+        minPid: Int,
+        maxPid: Int,
+    ): Result<LikedPhotoList> =
         runCatching {
             withContext(dispatcher) {
                 photoService.getLikedPhotos(subAlbumId, minPid, maxPid)

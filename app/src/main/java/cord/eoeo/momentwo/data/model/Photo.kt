@@ -10,14 +10,6 @@ data class UploadPhoto(
 )
 
 @JsonClass(generateAdapter = true)
-data class DeletePhotos(
-    val albumId: Int,
-    val subAlbumId: Int,
-    val imagesId: List<Int>,
-    val imagesUrl: List<String>,
-)
-
-@JsonClass(generateAdapter = true)
 data class PhotoPage(
     val images: List<PhotoInfo>,
     val nextCursor: Int?,
@@ -26,12 +18,12 @@ data class PhotoPage(
 @JsonClass(generateAdapter = true)
 data class PhotoInfo(
     val id: Int,
-    val imageUrl: String
+    val imageUrl: String,
 )
 
 @JsonClass(generateAdapter = true)
 data class LikedPhotoList(
-    val likesList: List<LikedPhoto>
+    val likesList: List<LikedPhoto>,
 )
 
 @JsonClass(generateAdapter = true)
@@ -40,5 +32,5 @@ data class LikedPhoto(
     val subAlbumId: Int,
     val photoId: Int,
     val nickname: String,
-    val likesStatus: Boolean
+    val likesStatus: Boolean,
 )

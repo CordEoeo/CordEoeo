@@ -14,7 +14,7 @@ class PhotoDetailContract {
         val albumId: Int = -1,
         val photoId: Int = -1,
         val photoUrl: String = "",
-        val descriptionItem: DescriptionItem = DescriptionItem("", "", "", ""),
+        val descriptionItem: DescriptionItem = DescriptionItem("", "", "", "", emptyList()),
         val likeCount: Int = 0,
         val likeLastUpdated: Long = 0L,
         val commentPagingData: Flow<PagingData<CommentItem>> = emptyFlow(),
@@ -30,30 +30,76 @@ class PhotoDetailContract {
 
     sealed interface Event : UiEvent {
         data object OnToggleIsMenuVisible : Event
+
         data object OnToggleIsLiked : Event
+
         data object OnGetLikeCount : Event
-        data class OnChangeIsDescriptionVisible(val isDescriptionVisible: Boolean) : Event
-        data class OnChangeIsWriteDescMode(val isWriteDescMode: Boolean) : Event
+
+        data class OnChangeIsDescriptionVisible(
+            val isDescriptionVisible: Boolean,
+        ) : Event
+
+        data class OnChangeIsWriteDescMode(
+            val isWriteDescMode: Boolean,
+        ) : Event
+
         data object OnGetDescription : Event
-        data class OnWriteDescription(val title: String, val contents: String) : Event
-        data class OnEditDescription(val title: String, val contents: String) : Event
+
+        data class OnWriteDescription(
+            val title: String,
+            val contents: String,
+        ) : Event
+
+        data class OnEditDescription(
+            val title: String,
+            val contents: String,
+        ) : Event
+
         data object OnDeleteDescription : Event
-        data class OnChangeIsCommentVisible(val isCommentVisible: Boolean) : Event
+
+        data class OnChangeIsCommentVisible(
+            val isCommentVisible: Boolean,
+        ) : Event
+
         data object OnScrollCommentToTop : Event
-        data class OnWriteComment(val comment: String) : Event
-        data class OnEditComment(val commentId: Int, val comment: String) : Event
-        data class OnDeleteComment(val commentId: Int) : Event
+
+        data class OnWriteComment(
+            val comment: String,
+        ) : Event
+
+        data class OnEditComment(
+            val commentId: Int,
+            val comment: String,
+        ) : Event
+
+        data class OnDeleteComment(
+            val commentId: Int,
+        ) : Event
+
         data object OnDownloadPhoto : Event
+
         data object OnBack : Event
-        data class OnShowSnackbar(val message: String) : Event
+
+        data class OnShowSnackbar(
+            val message: String,
+        ) : Event
     }
 
     sealed interface Effect : UiEffect {
         data object RefreshCommentPagingData : Effect
+
         data object ScrollCommentToBottom : Effect
+
         data object ScrollCommentToTop : Effect
-        data class ToggleSystemBars(val isVisible: Boolean) : Effect
+
+        data class ToggleSystemBars(
+            val isVisible: Boolean,
+        ) : Effect
+
         data object PopBackStack : Effect
-        data class ShowSnackbar(val message: String) : Effect
+
+        data class ShowSnackbar(
+            val message: String,
+        ) : Effect
     }
 }

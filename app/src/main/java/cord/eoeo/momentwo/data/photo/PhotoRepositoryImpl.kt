@@ -14,7 +14,6 @@ import androidx.paging.map
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import cord.eoeo.momentwo.data.model.DeletePhotos
 import cord.eoeo.momentwo.data.model.PresignedRequest
 import cord.eoeo.momentwo.data.model.UploadPhoto
 import cord.eoeo.momentwo.data.model.UriRequestBody
@@ -37,7 +36,11 @@ class PhotoRepositoryImpl(
     private val contentResolver = applicationContext.contentResolver
 
     @OptIn(ExperimentalPagingApi::class)
-    override suspend fun getPhotoPagingData(pageSize: Int, albumId: Int, subAlbumId: Int): Flow<PagingData<PhotoItem>> {
+    override suspend fun getPhotoPagingData(
+        pageSize: Int,
+        albumId: Int,
+        subAlbumId: Int,
+    ): Flow<PagingData<PhotoItem>> {
         photoRemoteMediator.setParams(pageSize, albumId, subAlbumId)
 
         return Pager(
@@ -54,23 +57,28 @@ class PhotoRepositoryImpl(
     override suspend fun requestUploadPhoto(
         albumId: Int,
         subAlbumId: Int,
-        image: Uri
+        image: Uri,
     ): Result<Unit> {
         val uriRequestBody = UriRequestBody(contentResolver, image)
 
-        photoRemoteDataSource.requestPresignedUrl(
-            PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: "")
-        ).map { it.presignedUrl }
+        photoRemoteDataSource
+            .requestPresignedUrl(
+                PresignedRequest(albumId, uriRequestBody.contentType()?.subtype ?: ""),
+            ).map { it.presignedUrl }
             .onSuccess { presignedUrl ->
-                val filename = presignedUrl
-                    .split("?").first()
-                    .split("/").drop(3).joinToString("/")
+                val filename =
+                    presignedUrl
+                        .split("?")
+                        .first()
+                        .split("/")
+                        .drop(3)
+                        .joinToString("/")
 
                 presignedRemoteDataSource
                     .uploadPhoto(presignedUrl, uriRequestBody)
                     .onSuccess {
                         return photoRemoteDataSource.requestUploadPhoto(
-                            UploadPhoto(albumId, subAlbumId, filename)
+                            UploadPhoto(albumId, subAlbumId, filename),
                         )
                     }.onFailure {
                         return Result.failure(Exception("Presigned Upload Failure"))
@@ -85,45 +93,62 @@ class PhotoRepositoryImpl(
         albumId: Int,
         subAlbumId: Int,
         photoIds: List<Int>,
-        photoUrls: List<String>
     ): Result<Unit> {
         val deletePhotosResult =
-            photoRemoteDataSource.deletePhotos(DeletePhotos(albumId, subAlbumId, photoIds, photoUrls))
+            photoRemoteDataSource.deletePhotos(albumId, subAlbumId, photoIds.joinToString(","))
         deletePhotosResult.onSuccess {
             photoLocalDataSource.deletePhotos(photoIds)
         }
         return deletePhotosResult
     }
 
-    override suspend fun updateIsLiked(photoId: Int, isLiked: Boolean) {
+    override suspend fun updateIsLiked(
+        photoId: Int,
+        isLiked: Boolean,
+    ) {
         photoLocalDataSource.updateIsLiked(photoId, isLiked)
     }
 
     override suspend fun downloadPhoto(imageUrl: String): Result<Unit> {
-        val bitmap = loadBitmapFromUrl(imageUrl)
-            ?: return Result.failure(Exception("Failed to load bitmap"))
-        val fileName = imageUrl.split("/").last().split(".").first()
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.png")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-            put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/Momentwo")
-        }
-        val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-            ?: return Result.failure(Exception("Failed to insert uri"))
-        val outputStream = contentResolver.openOutputStream(uri)
-            ?: return Result.failure(Exception("Failed to insert uri"))
+        val bitmap =
+            loadBitmapFromUrl(imageUrl)
+                ?: return Result.failure(Exception("Failed to load bitmap"))
+        val fileName =
+            imageUrl
+                .split("/")
+                .last()
+                .split(".")
+                .first()
+        val contentValues =
+            ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.png")
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/Momentwo")
+            }
+        val uri =
+            contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                ?: return Result.failure(Exception("Failed to insert uri"))
+        val outputStream =
+            contentResolver.openOutputStream(uri)
+                ?: return Result.failure(Exception("Failed to insert uri"))
 
         return photoLocalDataSource.downloadPhoto(bitmap, outputStream)
     }
 
     private suspend fun loadBitmapFromUrl(imageUrl: String): Bitmap? =
         withContext(Dispatchers.IO) {
-            (((imageLoader.execute(
-                ImageRequest.Builder(applicationContext)
-                    .data(imageUrl)
-                    .allowHardware(false)
-                    .build()
-            ) as? SuccessResult)?.drawable
-                    ) as? BitmapDrawable)?.bitmap
+            (
+                (
+                    (
+                        imageLoader.execute(
+                            ImageRequest
+                                .Builder(applicationContext)
+                                .data(imageUrl)
+                                .allowHardware(false)
+                                .build(),
+                        ) as? SuccessResult
+                    )?.drawable
+                ) as? BitmapDrawable
+            )?.bitmap
         }
 }
