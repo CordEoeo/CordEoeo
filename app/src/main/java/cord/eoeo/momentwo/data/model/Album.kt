@@ -37,6 +37,8 @@ data class AlbumInfo(
     val title: String,
     val subTitle: String,
     val profileImage: String,
+    @Json(name = "albumCount")
+    val subAlbumCount: Int,
 ) {
     fun mapToAlbumItem(): AlbumItem =
         AlbumItem(
@@ -44,6 +46,7 @@ data class AlbumInfo(
             title = title,
             subTitle = subTitle,
             imageUrl = profileImage,
+            subAlbumCount = subAlbumCount,
         )
 }
 
@@ -56,5 +59,5 @@ data class AlbumInfoList(
 @JsonClass(generateAdapter = true)
 data class AlbumRole(
     val albumId: Int,
-    val rules: MemberRule,
+    val rules: String,
 )

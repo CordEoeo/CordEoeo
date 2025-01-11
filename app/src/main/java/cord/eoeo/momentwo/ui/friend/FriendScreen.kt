@@ -152,11 +152,11 @@ fun FriendScreen(
                                 ),
                             )
                         },
-                        onClickCancel = { index, nickname ->
+                        onClickCancel = { index, userId ->
                             onEvent(
                                 FriendContract.Event.OnCancelFriendRequest(
                                     index,
-                                    nickname,
+                                    userId,
                                 ),
                             )
                         },

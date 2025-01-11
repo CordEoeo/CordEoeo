@@ -2,7 +2,6 @@ package cord.eoeo.momentwo.data.subalbum
 
 import cord.eoeo.momentwo.data.model.CreateSubAlbumInfo
 import cord.eoeo.momentwo.data.model.EditSubAlbumInfo
-import cord.eoeo.momentwo.data.model.SubAlbumIds
 import cord.eoeo.momentwo.data.model.SubAlbumList
 
 interface SubAlbumDataSource {
@@ -12,5 +11,8 @@ interface SubAlbumDataSource {
 
     suspend fun changeSubAlbumTitle(editSubAlbumInfo: EditSubAlbumInfo): Result<Unit>
 
-    suspend fun deleteSubAlbums(subAlbumIds: SubAlbumIds): Result<Unit>
+    suspend fun deleteSubAlbums(
+        albumId: Int,
+        subAlbumIds: String,
+    ): Result<Unit>
 }

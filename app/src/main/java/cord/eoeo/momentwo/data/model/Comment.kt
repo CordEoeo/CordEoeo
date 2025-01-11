@@ -18,12 +18,6 @@ data class EditComment(
 )
 
 @JsonClass(generateAdapter = true)
-data class DeleteComment(
-    val albumId: Int,
-    val commentId: Int,
-)
-
-@JsonClass(generateAdapter = true)
 data class CommentPage(
     val commentsList: List<Comment>,
     val nextCursor: Int?,

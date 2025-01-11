@@ -2,7 +2,6 @@ package cord.eoeo.momentwo.data.subalbum.remote
 
 import cord.eoeo.momentwo.data.model.CreateSubAlbumInfo
 import cord.eoeo.momentwo.data.model.EditSubAlbumInfo
-import cord.eoeo.momentwo.data.model.SubAlbumIds
 import cord.eoeo.momentwo.data.model.SubAlbumList
 import cord.eoeo.momentwo.data.subalbum.SubAlbumDataSource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,10 +33,13 @@ class SubAlbumRemoteDataSource(
             }
         }
 
-    override suspend fun deleteSubAlbums(subAlbumIds: SubAlbumIds): Result<Unit> =
+    override suspend fun deleteSubAlbums(
+        albumId: Int,
+        subAlbumIds: String,
+    ): Result<Unit> =
         runCatching {
             withContext(dispatcher) {
-                subAlbumService.deleteSubAlbums(subAlbumIds)
+                subAlbumService.deleteSubAlbums(albumId, subAlbumIds)
             }
         }
 }

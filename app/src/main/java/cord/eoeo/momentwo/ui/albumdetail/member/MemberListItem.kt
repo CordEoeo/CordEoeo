@@ -32,24 +32,25 @@ import cord.eoeo.momentwo.ui.theme.starYellow
 fun MemberListItem(
     memberItem: () -> MemberItem,
     isEditMode: () -> Boolean,
-    getIsSelected: (String) -> Boolean,
-    onChangeMemberSelected: (Boolean, String) -> Unit,
+    getIsSelected: (Int) -> Boolean,
+    onChangeMemberSelected: (Boolean, Int) -> Unit,
 ) {
-    val isSelected = getIsSelected(memberItem().nickname)
-    val authColor = with(MaterialTheme.colorScheme) {
-        when (memberItem().auth) {
-            MemberAuth.ADMIN -> error
-            MemberAuth.SUB_ADMIN -> tertiary
-            MemberAuth.MEMBER -> if (isSystemInDarkTheme()) Color.White else Color.Black
+    val isSelected = getIsSelected(memberItem().id)
+    val authColor =
+        with(MaterialTheme.colorScheme) {
+            when (memberItem().auth) {
+                MemberAuth.ADMIN -> error
+                MemberAuth.SUB_ADMIN -> tertiary
+                MemberAuth.MEMBER -> if (isSystemInDarkTheme()) Color.White else Color.Black
+            }
         }
-    }
 
     MemberListItemScreen(
         memberItem = memberItem,
         isEditMode = isEditMode,
         authColor = { authColor },
         isSelected = { isSelected },
-        onSelectedChange = { onChangeMemberSelected(it, memberItem().nickname) },
+        onSelectedChange = { onChangeMemberSelected(it, memberItem().id) },
     )
 }
 
@@ -62,18 +63,20 @@ fun MemberListItemScreen(
     onSelectedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .height(60.dp)
-            .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .height(60.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp),
     ) {
         if (isEditMode()) {
             Checkbox(
                 checked = isSelected(),
                 onCheckedChange = onSelectedChange,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .wrapContentHeight(align = Alignment.CenterVertically),
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .wrapContentHeight(align = Alignment.CenterVertically),
             )
         }
 
@@ -96,10 +99,11 @@ fun MemberListItemScreen(
         Text(
             text = memberItem().nickname,
             fontSize = 18.sp,
-            modifier = Modifier
-                .fillMaxHeight()
-                .wrapContentHeight(align = Alignment.CenterVertically)
-                .padding(start = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .padding(start = 8.dp),
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -108,10 +112,11 @@ fun MemberListItemScreen(
             text = memberItem().auth.authString,
             fontSize = 14.sp,
             color = authColor(),
-            modifier = Modifier
-                .fillMaxHeight()
-                .wrapContentHeight(align = Alignment.CenterVertically)
-                .padding(end = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxHeight()
+                    .wrapContentHeight(align = Alignment.CenterVertically)
+                    .padding(end = 8.dp),
         )
     }
 }

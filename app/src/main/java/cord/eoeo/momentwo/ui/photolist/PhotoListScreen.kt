@@ -87,7 +87,7 @@ fun PhotoListScreen(
             description = { "변경할 제목을 입력하세요" },
             onDismiss = { onEvent(PhotoListContract.Event.OnChangeIsDialogOpened(false)) },
             onConfirm = { subAlbumTitle -> onEvent(PhotoListContract.Event.OnConfirmDialog(subAlbumTitle)) },
-            placeholder = { uiState().subAlbumTitle }
+            placeholder = { uiState().subAlbumTitle },
         )
     }
 
@@ -127,10 +127,11 @@ fun PhotoListScreen(
                     onEvent(PhotoListContract.Event.OnChangeIsRefreshing(false))
                 }
             },
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 8.dp)
-                .padding(paddingValue),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp)
+                    .padding(paddingValue),
         ) {
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(100.dp),
@@ -147,7 +148,7 @@ fun PhotoListScreen(
                             isEditMode = { uiState().isEditMode },
                             isSelected = { uiState().selectedPhotoIds.contains(photoItem.id) },
                             onChangeSelected = { isSelected ->
-                                onEvent(PhotoListContract.Event.OnChangeIsSelected(isSelected, photoItem))
+                                onEvent(PhotoListContract.Event.OnChangeIsSelected(isSelected, photoItem.id))
                             },
                             onClick = {
                                 navigateToPhotoDetail(
@@ -215,12 +216,12 @@ fun PhotoListTopAppBar(
                     DropdownMenuItem(
                         text = { Text("서브 앨범 제목 수정") },
                         onClick = onClickEditTitle,
-                        leadingIcon = { Icon(Icons.Default.Edit, "서브 앨범 제목 수정") }
+                        leadingIcon = { Icon(Icons.Default.Edit, "서브 앨범 제목 수정") },
                     )
                     DropdownMenuItem(
                         text = { Text("사진 삭제") },
                         onClick = onClickEditPhoto,
-                        leadingIcon = { Icon(Icons.Default.HideImage, "사진 목록 편집") }
+                        leadingIcon = { Icon(Icons.Default.HideImage, "사진 목록 편집") },
                     )
                 }
             } else {

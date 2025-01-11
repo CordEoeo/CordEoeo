@@ -7,9 +7,3 @@ data class LoginRequest(
     val username: String,
     val password: String,
 )
-
-@JsonClass(generateAdapter = true)
-data class LoginResponse(
-    val accessToken: String,
-    val refreshToken: String,
-)

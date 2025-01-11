@@ -51,9 +51,3 @@ data class SubAlbumInfo(
 data class SubAlbumList(
     val subAlbumList: List<SubAlbumInfo>,
 )
-
-@JsonClass(generateAdapter = true)
-data class SubAlbumIds(
-    val albumId: Int,
-    val subAlbumIds: List<Int>,
-)

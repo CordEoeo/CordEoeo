@@ -18,17 +18,12 @@ data class EditDescription(
 )
 
 @JsonClass(generateAdapter = true)
-data class DeleteDescription(
-    val albumId: Int,
-    val photoId: Int,
-)
-
-@JsonClass(generateAdapter = true)
 data class Description(
     val nickname: String,
     val userProfileImage: String,
     val description: String,
     val date: String,
+    val photoTags: List<String>,
 ) {
     fun mapToDescriptionItem(): DescriptionItem =
         DescriptionItem(
@@ -36,5 +31,6 @@ data class Description(
             userProfileImage = userProfileImage,
             description = description,
             date = date,
+            photoTags = photoTags,
         )
 }

@@ -85,8 +85,8 @@ fun SearchUserDialog(
         },
         onSearch = onSearch,
         onDismiss = onDismiss,
-        onSelectUser = {
-            selectedUser = it
+        onSelectUser = { nickname ->
+            selectedUser = nickname
             isAlertOpened = true
         },
     )
@@ -117,15 +117,17 @@ fun SearchUserDialogScreen(
 
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-        ),
+        properties =
+            DialogProperties(
+                usePlatformDefaultWidth = false,
+            ),
     ) {
         Card(
             shape = RoundedCornerShape(16.dp),
-            modifier = Modifier
-                .fillMaxHeight(0.8f)
-                .fillMaxWidth(0.9f),
+            modifier =
+                Modifier
+                    .fillMaxHeight(0.8f)
+                    .fillMaxWidth(0.9f),
         ) {
             SearchBar(
                 inputField = {
@@ -148,7 +150,7 @@ fun SearchUserDialogScreen(
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     items(
                         count = lazySearchResult().itemCount,
@@ -170,10 +172,11 @@ fun SearchUserDialogScreen(
                                     Text(user.nickname)
                                 },
                                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                                    .clickable { onSelectUser(user.nickname) },
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp)
+                                        .clickable { onSelectUser(user.nickname) },
                             )
                         }
                     }
@@ -199,7 +202,7 @@ fun SearchUserAlertDialog(
                         append(nickname())
                     }
                     append("님에게 친구 요청을 보내시겠습니까?")
-                }
+                },
             )
         },
         onDismissRequest = onClickDismiss,
@@ -221,7 +224,7 @@ fun SearchUserAlertDialog(
 
 @Preview
 @Composable
-fun SearchUserDialogPreview() {
+private fun SearchUserDialogPreview() {
     MomentwoTheme {
         SearchUserDialog(
             imageLoader = LocalContext.current.imageLoader,
@@ -234,8 +237,8 @@ fun SearchUserDialogPreview() {
                             UserItem(3, "User3", ""),
                             UserItem(4, "User4", ""),
                             UserItem(5, "User5", ""),
-                        )
-                    )
+                        ),
+                    ),
                 )
             },
             onSearch = { },
@@ -247,7 +250,7 @@ fun SearchUserDialogPreview() {
 
 @Preview
 @Composable
-fun SearchUserAlertDialogPreview() {
+private fun SearchUserAlertDialogPreview() {
     MomentwoTheme {
         SearchUserAlertDialog(
             nickname = { "User1" },

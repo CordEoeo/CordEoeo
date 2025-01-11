@@ -3,8 +3,6 @@ package cord.eoeo.momentwo.data.member
 import cord.eoeo.momentwo.data.model.AssignAdminToMember
 import cord.eoeo.momentwo.data.model.EditMembers
 import cord.eoeo.momentwo.data.model.InviteMembers
-import cord.eoeo.momentwo.data.model.KickMembers
-import cord.eoeo.momentwo.data.model.MemberRule
 import cord.eoeo.momentwo.ui.model.MemberItem
 
 class MemberRepositoryImpl(
@@ -32,10 +30,10 @@ class MemberRepositoryImpl(
 
     override suspend fun kickMembers(
         albumId: Int,
-        kickMembers: List<String>,
+        kickMembers: List<Int>,
     ): Result<Unit> {
         // return Result.success(Unit)
-        return memberRemoteDataSource.kickMembers(KickMembers(albumId, kickMembers))
+        return memberRemoteDataSource.kickMembers(albumId, kickMembers.joinToString(","))
     }
 
     override suspend fun assignAdminToMember(
@@ -52,7 +50,7 @@ class MemberRepositoryImpl(
     ): Result<Unit> {
         // return Result.success(Unit)
         return memberRemoteDataSource.editMembersPermission(
-            EditMembers(albumId, editMembers.associate { it.nickname to MemberRule.memberAuthToRule(it.auth) }),
+            EditMembers(albumId, editMembers.associate { it.nickname to it.auth.roleString }),
         )
     }
 }

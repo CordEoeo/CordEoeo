@@ -13,51 +13,24 @@ data class InviteMembers(
 )
 
 @JsonClass(generateAdapter = true)
-data class KickMembers(
-    val albumId: Int,
-    @Json(name = "kickMemberList")
-    val memberList: List<String>,
-)
-
-@JsonClass(generateAdapter = true)
 data class AssignAdminToMember(
     val albumId: Int,
     val nickname: String,
 )
 
 @JsonClass(generateAdapter = true)
-enum class MemberRule {
-    ROLE_ALBUM_ADMIN,
-    ROLE_ALBUM_SUB_ADMIN,
-    ROLE_ALBUM_COMMON_MEMBER,
-    ;
-
-    fun mapToMemberAuth(): MemberAuth =
-        when (this) {
-            ROLE_ALBUM_ADMIN -> MemberAuth.ADMIN
-            ROLE_ALBUM_SUB_ADMIN -> MemberAuth.SUB_ADMIN
-            ROLE_ALBUM_COMMON_MEMBER -> MemberAuth.MEMBER
-        }
-
-    companion object {
-        fun memberAuthToRule(memberAuth: MemberAuth): MemberRule =
-            when (memberAuth) {
-                MemberAuth.ADMIN -> ROLE_ALBUM_ADMIN
-                MemberAuth.SUB_ADMIN -> ROLE_ALBUM_SUB_ADMIN
-                MemberAuth.MEMBER -> ROLE_ALBUM_COMMON_MEMBER
-            }
-    }
-}
-
-@JsonClass(generateAdapter = true)
 data class MemberInfo(
+    val userId: Int,
     val nickname: String,
-    val rules: MemberRule,
+    val userProfileImage: String,
+    val rules: String,
 ) {
     fun mapToMemberItem(): MemberItem =
         MemberItem(
+            id = userId,
             nickname = nickname,
-            auth = rules.mapToMemberAuth(),
+            profileImage = userProfileImage,
+            auth = MemberAuth.fromRoleString(rules),
         )
 }
 
@@ -71,5 +44,5 @@ data class MemberList(
 data class EditMembers(
     val albumId: Int,
     @Json(name = "editMemberList")
-    val memberMap: Map<String, MemberRule>,
+    val memberMap: Map<String, String>,
 )

@@ -1,7 +1,6 @@
 package cord.eoeo.momentwo.data.description
 
 import cord.eoeo.momentwo.data.model.CreateDescription
-import cord.eoeo.momentwo.data.model.DeleteDescription
 import cord.eoeo.momentwo.data.model.Description
 import cord.eoeo.momentwo.data.model.EditDescription
 
@@ -10,7 +9,13 @@ interface DescriptionDataSource {
 
     suspend fun editDescription(editDescription: EditDescription): Result<Unit>
 
-    suspend fun deleteDescription(deleteDescription: DeleteDescription): Result<Unit>
+    suspend fun deleteDescription(
+        albumId: Int,
+        photoId: Int,
+    ): Result<Unit>
 
-    suspend fun getDescription(albumId: Int, photoId: Int): Result<Description>
+    suspend fun getDescription(
+        albumId: Int,
+        photoId: Int,
+    ): Result<Description>
 }

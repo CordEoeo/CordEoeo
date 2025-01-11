@@ -12,17 +12,27 @@ interface FriendDataSource {
     interface Remote {
         suspend fun sendFriendRequest(nickname: String): Result<Unit>
 
-        suspend fun responseFriendRequest(nickname: String, isAccepted: Boolean): Result<Unit>
+        suspend fun responseFriendRequest(
+            nickname: String,
+            isAccepted: Boolean,
+        ): Result<Unit>
 
-        suspend fun cancelFriendRequest(nickname: String): Result<Unit>
+        suspend fun cancelFriendRequest(userId: Int): Result<Unit>
 
-        suspend fun getFriendPage(size: Int, cursor: Int): Result<FriendPage>
+        suspend fun getFriendPage(
+            size: Int,
+            cursor: Int,
+        ): Result<FriendPage>
 
         suspend fun getSentRequests(): Result<SentFriendRequestList>
 
         suspend fun getReceivedRequests(): Result<ReceivedFriendRequestList>
 
-        suspend fun getSearchUsers(nickname: String, page: Int, size: Int): Result<SearchUser>
+        suspend fun getSearchUsers(
+            nickname: String,
+            page: Int,
+            size: Int,
+        ): Result<SearchUser>
     }
 
     interface Local {
