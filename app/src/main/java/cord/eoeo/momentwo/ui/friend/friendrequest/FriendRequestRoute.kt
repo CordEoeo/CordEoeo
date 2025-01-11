@@ -19,7 +19,7 @@ fun FriendRequestRoute(
     getSentRequests: () -> Unit,
     onClickAccept: (Int, String) -> Unit,
     onClickReject: (Int, String) -> Unit,
-    onClickCancel: (Int, String) -> Unit,
+    onClickCancel: (Int, Int) -> Unit,
     pagerState: PagerState = rememberPagerState(pageCount = { 2 }),
 ) {
     FriendRequestScreen(

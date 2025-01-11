@@ -24,8 +24,8 @@ class FriendRepositoryImpl(
     override suspend fun responseFriendRequest(nickname: String, isAccepted: Boolean): Result<Unit> =
         friendRemoteDataSource.responseFriendRequest(nickname, isAccepted)
 
-    override suspend fun cancelFriendRequest(nickname: String): Result<Unit> =
-        friendRemoteDataSource.cancelFriendRequest(nickname)
+    override suspend fun cancelFriendRequest(userId: Int): Result<Unit> =
+        friendRemoteDataSource.cancelFriendRequest(userId)
 
     @OptIn(ExperimentalPagingApi::class)
     override suspend fun getFriendPage(size: Int): Flow<PagingData<FriendItem>> {

@@ -13,11 +13,13 @@ data class FriendRequestResponse(
 
 @JsonClass(generateAdapter = true)
 data class FriendInfo(
+    val userId: Int,
     val nickname: String,
     val userProfileImage: String,
 ) {
     fun mapToFriendRequestItem(): FriendRequestItem =
         FriendRequestItem(
+            userId = userId,
             nickname = nickname,
             userProfileImage = userProfileImage,
             isUpdated = false,

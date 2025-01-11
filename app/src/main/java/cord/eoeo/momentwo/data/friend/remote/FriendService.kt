@@ -13,6 +13,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FriendService {
@@ -28,10 +29,9 @@ interface FriendService {
         @Body friendRequestResponse: FriendRequestResponse,
     )
 
-    @FormUrlEncoded
     @DELETE(MomentwoApi.DELETE_FRIEND_REQUEST)
     suspend fun deleteFriendRequest(
-        @Field("nickname") nickname: String,
+        @Path("userId") userId: Int,
     )
 
     @GET(MomentwoApi.GET_FRIEND_PAGE)

@@ -27,13 +27,17 @@ class FriendContract {
     ) : UiState
 
     sealed interface Event : UiEvent {
-        data class OnChangeNavIndex(val navIndex: Int) : Event
+        data class OnChangeNavIndex(
+            val navIndex: Int,
+        ) : Event
 
         data object OnClickRequestFriend : Event
 
         data object OnDismissRequestFriend : Event
 
-        data class OnSendFriendRequest(val nickname: String) : Event
+        data class OnSendFriendRequest(
+            val nickname: String,
+        ) : Event
 
         data class OnResponseFriendRequest(
             val itemIndex: Int,
@@ -41,17 +45,24 @@ class FriendContract {
             val isAccepted: Boolean,
         ) : Event
 
-        data class OnCancelFriendRequest(val itemIndex: Int, val nickname: String) : Event
+        data class OnCancelFriendRequest(
+            val itemIndex: Int,
+            val userId: Int,
+        ) : Event
 
         data object OnGetReceivedRequests : Event
 
         data object OnGetSentRequests : Event
 
-        data class OnGetSearchUser(val query: String) : Event
+        data class OnGetSearchUser(
+            val query: String,
+        ) : Event
 
         data object OnBack : Event
 
-        data class OnError(val errorMessage: String) : Event
+        data class OnError(
+            val errorMessage: String,
+        ) : Event
     }
 
     sealed interface Effect : UiEffect {

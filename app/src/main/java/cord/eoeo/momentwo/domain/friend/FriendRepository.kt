@@ -14,7 +14,7 @@ interface FriendRepository {
         isAccepted: Boolean,
     ): Result<Unit>
 
-    suspend fun cancelFriendRequest(nickname: String): Result<Unit>
+    suspend fun cancelFriendRequest(userId: Int): Result<Unit>
 
     suspend fun getFriendPage(size: Int): Flow<PagingData<FriendItem>>
 

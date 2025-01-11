@@ -31,14 +31,17 @@ class FriendRemoteDataSource(
             }
         }
 
-    override suspend fun cancelFriendRequest(nickname: String): Result<Unit> =
+    override suspend fun cancelFriendRequest(userId: Int): Result<Unit> =
         runCatching {
             withContext(dispatcher) {
-                friendService.deleteFriendRequest(nickname)
+                friendService.deleteFriendRequest(userId)
             }
         }
 
-    override suspend fun getFriendPage(size: Int, cursor: Int): Result<FriendPage> =
+    override suspend fun getFriendPage(
+        size: Int,
+        cursor: Int,
+    ): Result<FriendPage> =
         runCatching {
             withContext(dispatcher) {
                 friendService.getFriendList(size, cursor)
@@ -59,7 +62,11 @@ class FriendRemoteDataSource(
             }
         }
 
-    override suspend fun getSearchUsers(nickname: String, page: Int, size: Int): Result<SearchUser> =
+    override suspend fun getSearchUsers(
+        nickname: String,
+        page: Int,
+        size: Int,
+    ): Result<SearchUser> =
         runCatching {
             withContext(dispatcher) {
                 friendService.getSearchUsers(nickname, page, size)

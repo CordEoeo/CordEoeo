@@ -33,7 +33,7 @@ fun FriendRequestScreen(
     getSentRequests: () -> Unit,
     onClickAccept: (Int, String) -> Unit,
     onClickReject: (Int, String) -> Unit,
-    onClickCancel: (Int, String) -> Unit,
+    onClickCancel: (Int, Int) -> Unit,
     pagerState: () -> PagerState,
 ) {
     LifecycleStartEffect(START_EFFECTS_KEY) {
@@ -63,9 +63,10 @@ fun FriendRequestScreen(
         HorizontalPager(
             state = pagerState(),
             beyondViewportPageCount = 1,
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
         ) { page ->
             when (page) {
                 0 -> {
@@ -127,7 +128,7 @@ fun SentRequestScreen(
     sentRequests: () -> List<FriendRequestItem>,
     isSentListChanged: () -> Boolean,
     getSentRequests: () -> Unit,
-    onClickCancel: (Int, String) -> Unit,
+    onClickCancel: (Int, Int) -> Unit,
 ) {
     LifecycleResumeEffect(RESUME_EFFECTS_KEY) {
         getSentRequests()
@@ -141,7 +142,7 @@ fun SentRequestScreen(
             SentFriendRequestItem(
                 imageLoader = imageLoader,
                 item = { friendRequestItem },
-                onClickCancel = { onClickCancel(index, friendRequestItem.nickname) },
+                onClickCancel = { onClickCancel(index, friendRequestItem.userId) },
             )
         }
     }
