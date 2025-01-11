@@ -16,8 +16,8 @@ fun MemberScreen(
     isEditMode: () -> Boolean,
     getMembers: () -> Unit,
     getFriends: () -> Unit,
-    getIsSelected: (String) -> Boolean,
-    onChangeMemberSelected: (Boolean, String) -> Unit,
+    getIsSelected: (Int) -> Boolean,
+    onChangeMemberSelected: (Boolean, Int) -> Unit,
     onBack: () -> Unit,
 ) {
     LifecycleStartEffect(START_EFFECTS_KEY) {

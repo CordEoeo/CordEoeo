@@ -14,7 +14,7 @@ interface MemberRepository {
 
     suspend fun kickMembers(
         albumId: Int,
-        kickMembers: List<String>,
+        kickMembers: List<Int>,
     ): Result<Unit>
 
     suspend fun assignAdminToMember(

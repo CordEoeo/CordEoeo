@@ -4,7 +4,6 @@ import cord.eoeo.momentwo.data.member.MemberDataSource
 import cord.eoeo.momentwo.data.model.AssignAdminToMember
 import cord.eoeo.momentwo.data.model.EditMembers
 import cord.eoeo.momentwo.data.model.InviteMembers
-import cord.eoeo.momentwo.data.model.KickMembers
 import cord.eoeo.momentwo.data.model.MemberList
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,10 +34,13 @@ class MemberRemoteDataSource(
             }
         }
 
-    override suspend fun kickMembers(kickMembers: KickMembers): Result<Unit> =
+    override suspend fun kickMembers(
+        albumId: Int,
+        kickMemberIds: String,
+    ): Result<Unit> =
         runCatching {
             withContext(dispatcher) {
-                memberService.deleteKickMembers(kickMembers)
+                memberService.deleteKickMembers(albumId, kickMemberIds)
             }
         }
 
