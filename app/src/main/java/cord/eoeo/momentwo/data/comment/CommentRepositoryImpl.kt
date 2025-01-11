@@ -6,7 +6,6 @@ import androidx.paging.PagingData
 import androidx.paging.map
 import cord.eoeo.momentwo.data.comment.remote.CommentPagingSource
 import cord.eoeo.momentwo.data.model.CreateComment
-import cord.eoeo.momentwo.data.model.DeleteComment
 import cord.eoeo.momentwo.data.model.EditComment
 import cord.eoeo.momentwo.ui.model.CommentItem
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +17,7 @@ class CommentRepositoryImpl(
     override suspend fun getCommentPagingData(
         albumId: Int,
         photoId: Int,
-        pageSize: Int
+        pageSize: Int,
     ): Flow<PagingData<CommentItem>> =
         Pager(
             config = PagingConfig(pageSize = pageSize),
@@ -27,19 +26,27 @@ class CommentRepositoryImpl(
                     commentRemoteDataSource,
                     pageSize,
                     albumId,
-                    photoId
+                    photoId,
                 )
-            }
+            },
         ).flow.map { commentPagingData ->
             commentPagingData.map { it.mapToCommentItem() }
         }
 
-    override suspend fun writeComment(albumId: Int, photoId: Int, comments: String): Result<Unit> =
-        commentRemoteDataSource.createComment(CreateComment(albumId, photoId, comments))
+    override suspend fun writeComment(
+        albumId: Int,
+        photoId: Int,
+        comments: String,
+    ): Result<Unit> = commentRemoteDataSource.createComment(CreateComment(albumId, photoId, comments))
 
-    override suspend fun editComment(albumId: Int, commentId: Int, comments: String): Result<Unit> =
-        commentRemoteDataSource.editComment(EditComment(albumId, commentId, comments))
+    override suspend fun editComment(
+        albumId: Int,
+        commentId: Int,
+        comments: String,
+    ): Result<Unit> = commentRemoteDataSource.editComment(EditComment(albumId, commentId, comments))
 
-    override suspend fun deleteComment(albumId: Int, commentId: Int): Result<Unit> =
-        commentRemoteDataSource.deleteComment(DeleteComment(albumId, commentId))
+    override suspend fun deleteComment(
+        albumId: Int,
+        commentId: Int,
+    ): Result<Unit> = commentRemoteDataSource.deleteComment(albumId, commentId)
 }

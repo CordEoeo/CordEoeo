@@ -3,7 +3,6 @@ package cord.eoeo.momentwo.data.comment.remote
 import cord.eoeo.momentwo.data.comment.CommentDataSource
 import cord.eoeo.momentwo.data.model.CommentPage
 import cord.eoeo.momentwo.data.model.CreateComment
-import cord.eoeo.momentwo.data.model.DeleteComment
 import cord.eoeo.momentwo.data.model.EditComment
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -27,14 +26,22 @@ class CommentRemoteDataSource(
             }
         }
 
-    override suspend fun deleteComment(deleteComment: DeleteComment): Result<Unit> =
+    override suspend fun deleteComment(
+        albumId: Int,
+        commentId: Int,
+    ): Result<Unit> =
         runCatching {
             withContext(dispatcher) {
-                commentService.deleteComment(deleteComment)
+                commentService.deleteComment(albumId, commentId)
             }
         }
 
-    override suspend fun getCommentPage(albumId: Int, photoId: Int, size: Int, cursor: Int): Result<CommentPage> =
+    override suspend fun getCommentPage(
+        albumId: Int,
+        photoId: Int,
+        size: Int,
+        cursor: Int,
+    ): Result<CommentPage> =
         runCatching {
             withContext(dispatcher) {
                 commentService.getCommentPage(albumId, photoId, size, cursor)
