@@ -20,6 +20,7 @@ fun AlbumRoute(
     coroutineScope: CoroutineScope,
     imageLoader: ImageLoader,
     navigateToCreateAlbum: () -> Unit,
+    navigateToProfile: () -> Unit,
     navigateToFriend: () -> Unit,
     navigateToAlbumDetail: (AlbumItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -40,6 +41,7 @@ fun AlbumRoute(
         onClickDrawer = { coroutineScope.launch { drawerState.open() } },
         onCloseDrawer = { coroutineScope.launch { drawerState.close() } },
         navigateToCreateAlbum = navigateToCreateAlbum,
+        navigateToProfile = navigateToProfile,
         navigateToFriend = navigateToFriend,
         navigateToAlbumDetail = navigateToAlbumDetail,
     )

@@ -14,6 +14,7 @@ import cord.eoeo.momentwo.ui.friend.FriendRoute
 import cord.eoeo.momentwo.ui.login.LoginRoute
 import cord.eoeo.momentwo.ui.photodetail.PhotoDetailRoute
 import cord.eoeo.momentwo.ui.photolist.PhotoListRoute
+import cord.eoeo.momentwo.ui.profile.ProfileRoute
 import cord.eoeo.momentwo.ui.signup.SignUpRoute
 import kotlinx.coroutines.CoroutineScope
 
@@ -51,6 +52,7 @@ fun MomentwoNavGraph(
                 coroutineScope = coroutineScope,
                 navigateToCreateAlbum = navActions.navigateToCreateAlbum,
                 navigateToFriend = navActions.navigateToFriend,
+                navigateToProfile = { navActions.navigateToProfile(null) },
                 navigateToAlbumDetail = navActions.navigateToAlbumDetail,
                 imageLoader = imageLoader,
             )
@@ -61,7 +63,7 @@ fun MomentwoNavGraph(
                 coroutineScope = coroutineScope,
                 imageLoader = imageLoader,
                 popBackStack = navActions.popBackStack,
-                navigateToPhotoList = navActions.navigateToPhotoList
+                navigateToPhotoList = navActions.navigateToPhotoList,
             )
         }
 
@@ -70,7 +72,7 @@ fun MomentwoNavGraph(
                 coroutineScope = coroutineScope,
                 imageLoader = imageLoader,
                 popBackStack = navActions.popBackStack,
-                navigateToPhotoDetail = navActions.navigateToPhotoDetail
+                navigateToPhotoDetail = navActions.navigateToPhotoDetail,
             )
         }
 
@@ -87,6 +89,14 @@ fun MomentwoNavGraph(
             CreateAlbumRoute(
                 coroutineScope = coroutineScope,
                 popBackStack = navActions.popBackStack,
+            )
+        }
+
+        composable<MomentwoDestination.Profile> {
+            ProfileRoute(
+                coroutineScope = coroutineScope,
+                popBackStack = navActions.popBackStack,
+                imageLoader = imageLoader,
             )
         }
 
