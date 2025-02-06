@@ -13,6 +13,10 @@ object MomentwoApi {
     // Login
     const val POST_LOGIN = "/signin"
 
+    // Profile
+    /** Require @Query("nickname") */
+    const val GET_PROFILE = "/users/profiles"
+
     // Album
     const val POST_CREATE_ALBUM = "/albums"
     /** Require @Path("albumId") */
