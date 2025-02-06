@@ -1,21 +1,25 @@
 package cord.eoeo.momentwo.data.login
 
-import android.util.Log
 import cord.eoeo.momentwo.data.model.LoginRequest
-import cord.eoeo.momentwo.ui.model.TokenItem
+import cord.eoeo.momentwo.domain.login.LoginRepository
+import cord.eoeo.momentwo.domain.mapper.ProfileMapper
+import cord.eoeo.momentwo.domain.model.LoginData
 
 class LoginRepositoryImpl(
-    private val loginRemoteDataSource: LoginDataSource
+    private val loginRemoteDataSource: LoginDataSource,
+    private val profileMapper: ProfileMapper,
 ) : LoginRepository {
-    override suspend fun requestLogin(email: String, password: String): Result<TokenItem> = runCatching {
-        val loginResponse = loginRemoteDataSource.requestLogin(LoginRequest(email, password))
+    override suspend fun requestLogin(
+        email: String,
+        password: String,
+    ): Result<LoginData> =
+        runCatching {
+            val loginResponse = loginRemoteDataSource.requestLogin(LoginRequest(email, password))
 
-        val accessToken = loginResponse.headers()["Authorization"] ?: ""
-        val refreshToken = loginResponse.headers()["Refresh"] ?: ""
+            val accessToken = loginResponse.headers()["Authorization"] ?: throw Exception("Access Token cannot be null")
+            val refreshToken = loginResponse.headers()["Refresh"] ?: throw Exception("Refresh Token cannot be null")
+            val userProfile = loginResponse.body() ?: throw Exception("Body cannot be null")
 
-        Log.d("Login", "accessToken: $accessToken")
-        Log.d("Login", "refreshToken: $refreshToken")
-
-        TokenItem(accessToken, refreshToken)
-    }
+            LoginData(accessToken, refreshToken, profileMapper.dataToDomain(userProfile))
+        }
 }
