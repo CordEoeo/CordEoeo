@@ -14,17 +14,32 @@ class LoginContract {
     ) : UiState
 
     sealed interface Event : UiEvent {
-        data class OnEmailEntered(val email: String) : Event
-        data class OnPasswordEntered(val password: String) : Event
+        data class OnEmailEntered(
+            val email: String,
+        ) : Event
+
+        data class OnPasswordEntered(
+            val password: String,
+        ) : Event
+
         data object OnLoginClicked : Event
+
         data object OnSignUpClicked : Event
+
         data object OnRequestAutoLogin : Event
-        data class OnError(val errorMessage: String) : Event
+
+        data class OnError(
+            val errorMessage: String,
+        ) : Event
     }
 
     sealed interface Effect : UiEffect {
         data object NavigateToAlbum : Effect
+
         data object NavigateToSignUp : Effect
-        data class ShowSnackbar(val message: String) : Effect
+
+        data class ShowSnackbar(
+            val message: String,
+        ) : Effect
     }
 }
