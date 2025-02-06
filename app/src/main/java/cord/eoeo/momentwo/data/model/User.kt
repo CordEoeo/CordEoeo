@@ -11,3 +11,12 @@ data class User(
     val birthday: String,
     val phone: String,
 )
+
+@JsonClass(generateAdapter = true)
+data class UserProfile(
+    val name: String,
+    val username: String,
+    val nickname: String,
+    val phone: String,
+    val userProfileImage: String,
+)

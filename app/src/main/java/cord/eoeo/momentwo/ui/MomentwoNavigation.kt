@@ -20,7 +20,7 @@ sealed interface MomentwoDestination {
         val title: String,
         val subTitle: String,
         val imageUrl: String,
-    )
+    ) : MomentwoDestination
 
     @Serializable
     data class PhotoList(
@@ -36,16 +36,23 @@ sealed interface MomentwoDestination {
         val photoId: Int,
         val photoUrl: String,
         val isLiked: Boolean,
-    )
+    ) : MomentwoDestination
 
     @Serializable
     data object CreateAlbum : MomentwoDestination
 
     @Serializable
+    data class Profile(
+        val nickname: String?,
+    ) : MomentwoDestination
+
+    @Serializable
     data object Friend : MomentwoDestination
 }
 
-class MomentwoNavigationActions(navController: NavHostController) {
+class MomentwoNavigationActions(
+    navController: NavHostController,
+) {
     val popBackStack: () -> Unit = {
         navController.popBackStack()
     }
@@ -75,6 +82,9 @@ class MomentwoNavigationActions(navController: NavHostController) {
     }
     val navigateToCreateAlbum: () -> Unit = {
         navController.navigate(MomentwoDestination.CreateAlbum)
+    }
+    val navigateToProfile: (String?) -> Unit = { nickname ->
+        navController.navigate(MomentwoDestination.Profile(nickname))
     }
     val navigateToFriend: () -> Unit = {
         navController.navigate(MomentwoDestination.Friend)

@@ -52,26 +52,28 @@ fun AlbumScreen(
     onClickDrawer: () -> Unit,
     onCloseDrawer: () -> Unit,
     navigateToCreateAlbum: () -> Unit,
+    navigateToProfile: () -> Unit,
     navigateToFriend: () -> Unit,
     navigateToAlbumDetail: (AlbumItem) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(SIDE_EFFECTS_KEY) {
         onEvent(AlbumContract.Event.OnGetAlbumList)
 
-        effectFlow().onEach { effect ->
-            when (effect) {
-                is AlbumContract.Effect.CloseDrawer -> {
-                    onCloseDrawer()
-                }
+        effectFlow()
+            .onEach { effect ->
+                when (effect) {
+                    is AlbumContract.Effect.CloseDrawer -> {
+                        onCloseDrawer()
+                    }
 
-                is AlbumContract.Effect.ShowSnackbar -> {
-                    snackbarHostState().showSnackbar(
-                        message = effect.message,
-                    )
+                    is AlbumContract.Effect.ShowSnackbar -> {
+                        snackbarHostState().showSnackbar(
+                            message = effect.message,
+                        )
+                    }
                 }
-            }
-        }.collect()
+            }.collect()
     }
 
     BackHandler(drawerState().isOpen) {
@@ -82,7 +84,7 @@ fun AlbumScreen(
         drawerState = drawerState(),
         drawerContent = {
             AlbumDrawerContent(
-                navigateToProfile = { /*TODO: Navigate to Profile*/ },
+                navigateToProfile = navigateToProfile,
                 navigateToFriend = navigateToFriend,
                 navigateToSetting = { /*TODO: Navigate to Setting*/ },
             )
@@ -102,9 +104,10 @@ fun AlbumScreen(
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 160.dp),
                 contentPadding = paddingValues,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp, 0.dp),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(8.dp, 0.dp),
             ) {
                 items(items = uiState().albumList, key = { it.id }) { albumItem ->
                     AlbumItemCard(
@@ -125,7 +128,7 @@ fun AlbumScreen(
 fun AlbumDrawerContent(
     navigateToProfile: () -> Unit,
     navigateToFriend: () -> Unit,
-    navigateToSetting: () -> Unit
+    navigateToSetting: () -> Unit,
 ) {
     ModalDrawerSheet {
         NavigationDrawerItem(
@@ -159,7 +162,7 @@ fun AlbumDrawerContent(
 @Composable
 fun AlbumTopAppBar(
     onClickDrawer: () -> Unit,
-    onClickSearch: () -> Unit
+    onClickSearch: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = { Text(text = "Album") },
@@ -177,9 +180,7 @@ fun AlbumTopAppBar(
 }
 
 @Composable
-fun CreateAlbumFAB(
-    onClick: () -> Unit
-) {
+fun CreateAlbumFAB(onClick: () -> Unit) {
     FloatingActionButton(onClick = onClick) {
         Icon(Icons.Default.Add, "")
     }
